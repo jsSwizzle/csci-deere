@@ -36,7 +36,7 @@ class Solver:
         a = math.acos(a)
         return a
 
-    def inverse_solve(self, x_pos, y_pos, z_pos, roll, pitch):
+    def specific_inverse_solve(self, x_pos, y_pos, z_pos, roll, pitch):
         r, theta, phi = self._convert_to_spherical(x_pos, y_pos, z_pos)
 
         if r > self._max_range:
