@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 class Solver:
 
@@ -37,6 +38,22 @@ class Solver:
         return a
 
     def specific_inverse_solve(self, x_pos, y_pos, z_pos, roll, pitch):
+        """Finds the angles for each joint of the arm given a target end effector.
+
+        Calculates and the angles each joint needs to be at given the target end
+        effector (x_pos, y_pos, z_pos) in cartesion space. Placing the wrist in the
+        position so it has the given roll and pitch.
+
+        Args:
+            x_pos {float} -- target x position for the end effector in cartesian space.
+            y_pos {float} -- target y position for the end effector in cartesian space.
+            z_pos {float} -- target z position for the end effector in cartesian space.
+            roll {float} -- end roll angle for the wrist when it is at the end effector.
+            pitch {float} -- end pitch angle for the wrist when it is at the end effector.
+
+        Returns:
+            angles {dict} -- list of angles for each servo in the arm (angles[<servoID>]['final_angle'])
+        """
         r, theta, phi = self._convert_to_spherical(x_pos, y_pos, z_pos)
 
         if r > self._max_range:
@@ -55,3 +72,17 @@ class Solver:
         angles['s5'] = {'final_angle':pitch}
 
         return angles
+
+    def forward_solve(self, current_angles):
+        """Finds the (x, y, z) position of the end effector of the arm.
+
+        Calculates the current (x, y, z) position of the end effector of the arm
+        using the given angles of each of the joints.
+
+        Args:
+            current_angles {dict} -- dictionary list of current angles for each servo (key = servoID, value = current angle)
+
+        Returns:
+            (x_pos, y_pos, z_pos) {list} -- list of individual elements for each coordinate in the cartesian plane
+        """
+        pass

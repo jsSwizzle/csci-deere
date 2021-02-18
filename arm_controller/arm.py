@@ -19,7 +19,6 @@ class Arm(Robot):
         """Constructs Arm class.
         """
         servo_info = {}
-        servo_info['ss'] = {'function':'speed','default_value':1.0, 'min_value':1.0, 'max_value':10.0}
         servo_info['s1'] = {'function':'waist','default_value':90.0, 'min_value':0.0, 'max_value':180.0}
         servo_info['s2'] = {'function':'shoulder','default_value':150.0, 'min_value':0.0, 'max_value':180.0}
         servo_info['s3'] = {'function':'elbow','default_value':35.0, 'min_value':0.0, 'max_value':180.0}
@@ -30,21 +29,22 @@ class Arm(Robot):
 
         segment_info = {}
         segment_info['seg1'] = {'base_servo':'s1','segment_length':1.0,'axis_of_rotation':'Z'}
-        segment_info['seg2'] = {'base_servo':'s2','segment_length':1.0,'axis_of_rotation':'Y'}
+        segment_info['seg2'] = {'base_servo':'s2','segment_length':120.0,'axis_of_rotation':'Y'}
         segment_info['seg3'] = {'base_servo':'s3','segment_length':1.0,'axis_of_rotation':'Y'}
         segment_info['seg4'] = {'base_servo':'s4','segment_length':1.0,'axis_of_rotation':'X'}
         segment_info['seg5'] = {'base_servo':'s5','segment_length':1.0,'axis_of_rotation':'Y'}
         self._segment_info = arm_info
 
         current_angles = {}
-        current_angles['s1'] = {'angle':0.0}
-        current_angles['s2'] = {'angle':0.0}
-        current_angles['s3'] = {'angle':0.0}
-        current_angles['s4'] = {'angle':0.0}
-        current_angles['s5'] = {'angle':0.0}
-        current_angles['s6'] = {'angle':0.0}
+        current_angles['s1'] = 0.0
+        current_angles['s2'] = 0.0
+        current_angles['s3'] = 0.0
+        current_angles['s4'] = 0.0
+        current_angles['s5'] = 0.0
+        current_angles['s6'] = 0.0
         self._current_angles = current_angles
 
+        self._servo_speed = 1.0
         self._solver = Solver(servo_info, segment_info)
         self._kit = ServoKit(channels=16)
         self.configure_board()
@@ -75,7 +75,7 @@ class Arm(Robot):
         Return:
             A list containing the (x, y, z) position of the claw.
         """
-        pass
+        self._solver.forward_solve()
 
     def set_speed(self, ss):
         """Set's the speed at which the servo's move.
@@ -85,10 +85,11 @@ class Arm(Robot):
         Args:
             ss {float} -- Rate of speed on a 1-10 scale: 1 being slowest, 10 being fastest.
         """
-        pass
+        if ss > 1.0 and ss < 10.0:
+            self._servo_speed = ss
 
     def configure_board(self):
-        """Sets mapping for Servo ID to Servo Number
+        """Sets mapping for Servo ID to Servo Number.
         """
         servo_no = 0
         for servo in self._servo_info:
@@ -98,7 +99,8 @@ class Arm(Robot):
     def set_default_position(self):
         """Loads the default position for the robot arm.
 
-        Sets the
+        Sets each servo to its default position found in the servo_info dictionary
+        created during class initialization.
         """
         for servo, info in self._servo_info.items():
             self.set_part(servo, info['default_value'])
@@ -112,6 +114,5 @@ class Arm(Robot):
             part {str} -- item part to move
             value {float} -- value to apply to part
         """
-        if part != 'ss':
-            self._kit.servo[self._servo_info[part]['servo#']].angle = value
-            self._current_angles[part]['angle'] = value
+        self._kit.servo[self._servo_info[part]['servo#']].angle = value
+        self._current_angles[part] = value
