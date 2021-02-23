@@ -9,7 +9,7 @@ class Solver:
         """Basic constructor for Solver class.
         """
         chain = Chain()
-        for segmentID, info in segment_info.items():
+        for segmentID in segment_info:
             pass # TODO: create segments for the chain from given info
         self._kdlChain = chain
         self._fkSolver = ChainFkSolverPos_recursive(chain)
