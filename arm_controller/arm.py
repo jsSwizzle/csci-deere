@@ -30,11 +30,11 @@ class Arm(Robot):
         self._joint_info = joint_info
 
         segment_info = {}
-        segment_info['seg1'] = {'head_joint':'jt1','segment_length':10.0}
-        segment_info['seg2'] = {'head_joint':'jt2','segment_length':120.0}
-        segment_info['seg3'] = {'head_joint':'jt3','segment_length':1.0}
-        segment_info['seg4'] = {'head_joint':'jt4','segment_length':1.0}
-        segment_info['seg5'] = {'head_joint':'jt5','segment_length':1.0}
+        segment_info['seg1'] = {'head_joint':'jt1','segment_length':.098507}
+        segment_info['seg2'] = {'head_joint':'jt2','segment_length':.120}
+        segment_info['seg3'] = {'head_joint':'jt3','segment_length':.11865}
+        segment_info['seg4'] = {'head_joint':'jt4','segment_length':.060028}
+        segment_info['seg5'] = {'head_joint':'jt5','segment_length':.030175}
         self._segment_info = segment_info
 
         current_angles = {}
