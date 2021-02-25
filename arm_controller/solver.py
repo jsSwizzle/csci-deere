@@ -1,17 +1,27 @@
 """Implementation of Solver Class to solve Kinematics of Arm Class.
 """
+from py_chain import PyChain
+from py_segment import PySegment
 from PyKDL import *
 import math
 
 class Solver:
 
-    def __init__(self, segment_info, joint_info):
+    def __init__(self, chain):
         """Basic constructor for Solver class.
         """
-        chain = Chain()
-        for segmentID in segment_info:
-            pass # TODO: create segments for the chain from given info
-        self._kdlChain = chain
+        self._kdlchain = Chain()
+        for segment in chain.segments:
+            rotation_frame = Frame(Rotation.EulerZYX(segment.rotation[0], segment.rotation[1], segment.rotation[2]))
+            vector_frame = Frame(Vector(segment.vector[0], segment.vector[1], segment.vector[2]))
+            frame = rotation_frame * vector_frame
+            if segment.is_static:
+                joint = Joint()
+                self._kdlChain.addSegment(Segment(joint, frame))
+            else:
+                joint = Joint(Joint.RotZ)
+                self._kdlChain.addSegment(Segment(joint, frame))
+
         self._fkSolver = ChainFkSolverPos_recursive(chain)
         self._ikSolverVel = ChainIkSolverVel_pinv(chain)
         self._ikSolver = ChainIkSolverPos_NR(chain, self._fkSolver, self._ikSolverVel)

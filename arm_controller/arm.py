@@ -11,6 +11,8 @@ are inherited from base Robot class.
 """
 from robot import Robot
 from solver import Solver
+from py_chain import PyChain
+from py_segment import PySegment
 from adafruit_servokit import ServoKit
 
 class Arm(Robot):
@@ -18,37 +20,22 @@ class Arm(Robot):
     def __init__(self):
         """Constructs Arm class.
         """
-        # TODO: update dictionaries according to what is needed for solver
-        joint_info = {}
-        joint_info['jt1'] = {'function':'waist','default_value':90.0, 'min_value':0.0, 'max_value':180.0,}
-        joint_info['jt2'] = {'function':'shoulder','default_value':150.0, 'min_value':0.0, 'max_value':180.0}
-        joint_info['jt3'] = {'function':'elbow','default_value':35.0, 'min_value':0.0, 'max_value':180.0,}
-        joint_info['jt4'] = {'function':'wrist_roll','default_value':140.0, 'min_value':0.0, 'max_value':180.0,}
-        joint_info['jt5'] = {'function':'wrist_pitch','default_value':85.0, 'min_value':0.0, 'max_value':180.0}
-        joint_info['jt6'] = {'function':'grip','default_value':80.0, 'min_value':0.0, 'max_value':180.0}
-        # TODO: determine if claw grip should be in joint info or seperate as its not needed for solver
-        self._joint_info = joint_info
-
-        segment_info = {}
-        segment_info['seg1'] = {'head_joint':'jt1','segment_length':.098507}
-        segment_info['seg2'] = {'head_joint':'jt2','segment_length':.120}
-        segment_info['seg3'] = {'head_joint':'jt3','segment_length':.11865}
-        segment_info['seg4'] = {'head_joint':'jt4','segment_length':.060028}
-        segment_info['seg5'] = {'head_joint':'jt5','segment_length':.030175}
-        self._segment_info = segment_info
-
-        current_angles = {}
-        current_angles['jt1'] = 0.0
-        current_angles['jt2'] = 0.0
-        current_angles['jt3'] = 0.0
-        current_angles['jt4'] = 0.0
-        current_angles['jt5'] = 0.0
-        current_angles['jt6'] = 0.0
-        # TODO: determine if claw grip (jt6) should be stored in current angles to make fk/ik solution returns neater
-        self._current_angles = current_angles
+        waist_segment = PySegment('seg1', 'waist', 90.0, 0.0, 180.0, ..., ..., False)
+        shoulder_segment = PySegment('seg2', 'shoulder', 150.0, 0.0, 180.0, ..., ..., False)
+        elbow_segment = PySegment('seg3', 'elbow', 35.0, 0.0, 180.0, ..., ..., False)
+        wrist_roll_segment = PySegment('seg4', 'wrist_roll', 140.0, 0.0, 180.0, ..., ..., False)
+        wrist_pitch_segment = PySegment('seg5', 'wrist_pitch', 80.0, 0.0, 180.0, ..., ..., False)
+        self._chain = PyChain()
+        self._chain.append_segment(waist_segment)
+        self._chain.append_segment(shoulder_segment)
+        self._chain.append_segment(elbow_segment)
+        self._chain.append_segment(wrist_roll_segment)
+        self._chain.append_segment(wrist_pitch_segment)
 
         self._servo_speed = 1.0
-        self._solver = Solver(segment_info, joint_info)
+        self._claw_angle = 0.0
+        self._default_claw_angle = 80.0
+        self._solver = Solver(self._chain)
         self._kit = ServoKit(channels=16)
         self.configure_board()
 
