@@ -9,10 +9,10 @@ are inherited from base Robot class.
     arm.getpos()
     arm.moveto(1.2,3.4,5.6)
 """
-from robot import Robot
-from solver import Solver
-from py_chain import PyChain
-from py_segment import PySegment
+from .robot import Robot
+from .solver import Solver
+from .py_chain import PyChain
+from .py_segment import PySegment
 from adafruit_servokit import ServoKit
 
 class Arm(Robot):
@@ -20,17 +20,19 @@ class Arm(Robot):
     def __init__(self):
         """Constructs Arm class.
         """
-        waist_segment = PySegment('seg1', 'waist', 90.0, 0.0, 180.0, ..., ..., False)
-        shoulder_segment = PySegment('seg2', 'shoulder', 150.0, 0.0, 180.0, ..., ..., False)
-        elbow_segment = PySegment('seg3', 'elbow', 35.0, 0.0, 180.0, ..., ..., False)
-        wrist_roll_segment = PySegment('seg4', 'wrist_roll', 140.0, 0.0, 180.0, ..., ..., False)
-        wrist_pitch_segment = PySegment('seg5', 'wrist_pitch', 80.0, 0.0, 180.0, ..., ..., False)
-        self._chain = PyChain()
-        self._chain.append_segment(waist_segment)
-        self._chain.append_segment(shoulder_segment)
-        self._chain.append_segment(elbow_segment)
-        self._chain.append_segment(wrist_roll_segment)
-        self._chain.append_segment(wrist_pitch_segment)
+        world_segment = PySegment('seg0', 'world', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56], None)
+        waist_segment = PySegment('seg1', 'waist', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,42.93], 'Z')
+        shoulder_segment = PySegment('seg2', 'shoulder', 150.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,120], 'Y')
+        elbow_segment = PySegment('seg3', 'elbow', 35.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,118.65], 'Y')
+        wrist_roll_segment = PySegment('seg4', 'wrist_roll', 140.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,60.028], 'Z')
+        wrist_pitch_segment = PySegment('seg5', 'wrist_pitch', 80.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,30.17], 'Y')
+        myChain = PyChain()
+        myChain.append_segment(world_segment)
+        myChain.append_segment(waist_segment)
+        myChain.append_segment(shoulder_segment)
+        myChain.append_segment(elbow_segment)
+        myChain.append_segment(wrist_roll_segment)
+        myChain.append_segment(wrist_pitch_segment)
 
         self._servo_speed = 1.0
         self._claw_angle = 0.0

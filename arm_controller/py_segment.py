@@ -1,6 +1,6 @@
 
 class PySegment():
-    def __init__(self, segment_id, function, default, min_value, max_value, rotation, vector, static, current_val=0.0, joint_no=0):
+    def __init__(self, segment_id, function, default, min_value, max_value, rotation, vector, joint_rot, current_val=0.0, joint_no=0):
         self.id = segment_id
         # default values and function
         self.function = function
@@ -11,7 +11,7 @@ class PySegment():
         self.current_val = current_val
         self.joint_no = joint_no
         # frame
-        self.rotation = rotation
-        self.vector = vector
+        self.rotation = rotation # [0, 0, pi / 2]
+        self.vector = vector # [0, 2, 0]
         # joint
-        self.is_static = static
+        self.joint_rot = joint_rot
