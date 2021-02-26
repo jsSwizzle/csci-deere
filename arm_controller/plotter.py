@@ -19,7 +19,8 @@ def calculateDeltas(arr0: [], arr1: []):
 
 
 class Plotter:
-
+    """Plotter class that can be used as a visual representation of a chain/arm.
+    """
     # def plot_arm(arm: PyChain):
     #     pass
     # segLens = []

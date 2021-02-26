@@ -18,6 +18,9 @@ class Solver(unittest.TestCase):
     def test_forward_solve(self):
         #ToDo determine test cases
 
+    def test_segmented_forward_solve(self):
+        #ToDo determine test cases
+
 class Py_Chain(unittest.TestCase):
     """Unit testing class for py_chain class methods
     """
@@ -29,7 +32,7 @@ class Py_Chain(unittest.TestCase):
 
     def test_append_segment(self):
         #ToDo determine test cases
-    
+
     def test_get_current_values(self):
         #ToDo determine test cases
 
