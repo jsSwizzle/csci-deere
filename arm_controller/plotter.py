@@ -97,10 +97,15 @@ class Plotter:
             ys = [item[1] for item in c]
             zs = [item[2] for item in c]
             # print(f'{xs}, {ys}, {zs}')
-            lines.append(ax.plot3D(xs, ys, zs))
+            ln = ax.plot3D(xs, ys, zs)
+            plt.setp(ln, marker='+', mec='k')
+            lines.append(ln)
         ax.set_xlim3d(-300, 300)
         ax.set_ylim3d(-300, 300)
         ax.set_zlim3d(0, 300)
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
         return lines
 
     def create_timelapse(coords1: [[]], coords2: [[]], ax, steps: int):
@@ -127,23 +132,28 @@ class Plotter:
             plt.setp(ln, alpha=1 - (currSteps / steps))
             lines.append(ln)
             currSteps -= 1
-        lines.append(ax.plot3D(x1s, y1s, z1s))
+        ln1 =ax.plot3D(x1s, y1s, z1s)
+        plt.setp(ln1, marker='x', mec='k')
+        lines.append(ln1)
         ax.set_xlim3d(-300, 300)
         ax.set_ylim3d(-300, 300)
         ax.set_zlim3d(0, 300)
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
         return lines
 
 
-test_coordinates1 = [[0, 0, 0], [0, 0, 1], [-.5, -.5, 1.5], [0, .5, 2], [1, 1, 1.5]]
-test_coordinates2 = [[0, 0, 0], [.3, 0, 1.8], [-.5, -.5, 1.8], [0, .4, 2.2], [2, 1.5, 2]]
-test_coordinates3 = [[0, 0, 0], [.5, 0, .5], [.7, -.5, 1], [0, .4, .7], [1.2, .7, 1.2]]
+test_coordinates1 = [[0, 0, 0], [0, 0, 1], [-50, -50, 150], [0, 50, 20], [10, 10, 150]]
+test_coordinates2 = [[0, 0, 0], [30, 0, 180], [-50, -50, 1.8], [0, 40, 220], [20, 150, 20]]
+test_coordinates3 = [[0, 0, 0], [50, 0, 50], [70, -50, 1], [0, 40, 70], [120, 70, 120]]
 
-if __name__ == '__main__':
-    ax = plt.axes(projection='3d')
-
-    # Plotter.create_lines([test_coordinates1, test_coordinates2, test_coordinates3], ax);
-    Plotter.create_timelapse(test_coordinates1, test_coordinates3, ax, 5)
-    Plotter.create_timelapse(test_coordinates1, test_coordinates2, ax, 5)
-    plt.show()
+# if __name__ == '__main__':
+#     ax = plt.axes(projection='3d')
+# # #
+# #     Plotter.create_lines([test_coordinates1, test_coordinates2, test_coordinates3], ax);
+#     Plotter.create_timelapse(test_coordinates1, test_coordinates3, ax, 4)
+#     Plotter.create_timelapse(test_coordinates1, test_coordinates2, ax, 4)
+#     plt.show()
     # plot_arm(FakeArm())
     # Plotter.plot_arm3D(FakeArm())
