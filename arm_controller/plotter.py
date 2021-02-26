@@ -1,6 +1,7 @@
 import enum
 import math
 import numpy
+# import squaternion
 
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
@@ -10,11 +11,10 @@ from mpl_toolkits import mplot3d
 # from .py_segment import PySegment
 # from .solver import Solver
 
-def calculateDeltas(a0: [], a1: []):
+def calculateDeltas(arr0: [], arr1: []):
     ret = []
-    for i, a in enumerate(a1):
-        ret.append(a - a0[i])
-    print(ret)
+    for i, (a0, a1) in enumerate(zip(arr0, arr1)):
+        ret.append(a1 - a0)
     return ret
 
 
@@ -90,48 +90,59 @@ class Plotter:
         ax.step(.2, .2)
         plt.show()
 
-    def create_lines(coords, ax):
+    def create_lines(coords: [[[]]], ax):
         lines = []
         for c in coords:
             xs = [item[0] for item in c]
             ys = [item[1] for item in c]
             zs = [item[2] for item in c]
-            print(f'{xs}, {ys}, {zs}')
+            # print(f'{xs}, {ys}, {zs}')
             lines.append(ax.plot3D(xs, ys, zs))
+        ax.set_xlim3d(-300, 300)
+        ax.set_ylim3d(-300, 300)
+        ax.set_zlim3d(0, 300)
         return lines
 
-    def create_timelapse(coord1, coord2, ax, steps: int):
+    def create_timelapse(coords1: [[]], coords2: [[]], ax, steps: int):
         lines = []
-        x0s, x1s = [item[0] for item in coord1], [item[0] for item in coord2]
+        x0s, x1s = [item[0] for item in coords1], [item[0] for item in coords2]
         xds = calculateDeltas(x0s, x1s)
-        y0s, y1s = [item[1] for item in coord1], [item[1] for item in coord2]
+        y0s, y1s = [item[1] for item in coords1], [item[1] for item in coords2]
         yds = calculateDeltas(y0s, y1s)
-        z0s, z1s = [item[2] for item in coord1], [item[2] for item in coord2]
+        z0s, z1s = [item[2] for item in coords1], [item[2] for item in coords2]
         zds = calculateDeltas(z0s, z1s)
-        lines.append(ax.plot3D(x0s, y0s, z0s))
+        ln0 = ax.plot3D(x0s, y0s, z0s)
+        plt.setp(ln0, marker='+', mec='k')
+        lines.append(ln0)
         currSteps = steps - 1
         while currSteps > 0:
-            xs = []
-            for i, x in enumerate(x1s):
-                xs.append(x - (xds[i] / steps * currSteps))
-            ys = []
-            for i, y in enumerate(y1s):
-                ys.append(y - (yds[i] / steps * currSteps))
-            zs = []
-            for i, z in enumerate(z1s):
-                zs.append(z - (zds[i] / steps * currSteps))
-            lines.append(ax.plot3D(xs, ys, zs))
+            xs, ys, zs = [], [], []
+            for i, (x, d) in enumerate(zip(x1s, xds)):
+                xs.append(x - (d / steps * currSteps))
+            for i, (y, d) in enumerate(zip(y1s, yds)):
+                ys.append(y - (d / steps * currSteps))
+            for i, (z, d) in enumerate(zip(z1s, zds)):
+                zs.append(z - (d / steps * currSteps))
+            ln = ax.plot3D(xs, ys, zs)
+            plt.setp(ln, alpha=1 - (currSteps / steps))
+            lines.append(ln)
             currSteps -= 1
         lines.append(ax.plot3D(x1s, y1s, z1s))
+        ax.set_xlim3d(-300, 300)
+        ax.set_ylim3d(-300, 300)
+        ax.set_zlim3d(0, 300)
         return lines
 
 
 test_coordinates1 = [[0, 0, 0], [0, 0, 1], [-.5, -.5, 1.5], [0, .5, 2], [1, 1, 1.5]]
-test_coordinates2 = [[0, 0, 0], [0, 0, 1.8], [-.5, -.5, 1.8], [0, .4, 2.2], [1, 1, 1]]
+test_coordinates2 = [[0, 0, 0], [.3, 0, 1.8], [-.5, -.5, 1.8], [0, .4, 2.2], [2, 1.5, 2]]
+test_coordinates3 = [[0, 0, 0], [.5, 0, .5], [.7, -.5, 1], [0, .4, .7], [1.2, .7, 1.2]]
 
 if __name__ == '__main__':
     ax = plt.axes(projection='3d')
-    # Plotter.create_lines([test_coordinates1, test_coordinates2], ax);
+
+    # Plotter.create_lines([test_coordinates1, test_coordinates2, test_coordinates3], ax);
+    Plotter.create_timelapse(test_coordinates1, test_coordinates3, ax, 5)
     Plotter.create_timelapse(test_coordinates1, test_coordinates2, ax, 5)
     plt.show()
     # plot_arm(FakeArm())
