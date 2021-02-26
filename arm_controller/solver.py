@@ -11,6 +11,9 @@ class Solver:
         """Basic constructor for Solver class.
         """
         self._kdlChain = Chain()
+        joint_mins = JntArray(chain.number_of_joints())
+        joint_maxs = JntArray(chain.number_of_joints())
+        i = 0
         for segment in chain.segments:
             rotation_frame = Frame(Rotation.EulerZYX(segment.rotation[0], segment.rotation[1], segment.rotation[2]))
             vector_frame = Frame(Vector(segment.vector[0], segment.vector[1], segment.vector[2]))
@@ -25,10 +28,14 @@ class Solver:
             elif segment.joint_rot == 'Z':
                 joint = Joint(Joint.RotZ)
             self._kdlChain.addSegment(Segment(joint, frame))
+            if segment.joint_rot != None:
+                joint_mins[i] = math.radians(segment.min_value)
+                joint_maxs[i] = math.radians(segment.max_value)
+                i += 1
 
         self._fkSolver = ChainFkSolverPos_recursive(self._kdlChain)
         self._ikSolverVel = ChainIkSolverVel_pinv(self._kdlChain)
-        self._ikSolver = ChainIkSolverPos_NR(self._kdlChain, self._fkSolver, self._ikSolverVel)
+        self._ikSolver = ChainIkSolverPos_NR_JL(self._kdlChain, joint_mins, joint_maxs, self._fkSolver, self._ikSolverVel, 100_000)
 
     def inverse_solve(self, initial_angles, target_coords, target_rpy):
         """Finds the angles for each joint of the arm given a target end effector.
@@ -52,7 +59,6 @@ class Solver:
 
         ikJointFinal = JntArray(self._kdlChain.getNrOfJoints())
         ikFrameTarget = Frame(Rotation.RPY(math.radians(target_rpy[0]), math.radians(target_rpy[1]), math.radians(target_rpy[2])), Vector(target_coords[0], target_coords[1], target_coords[2]))
-        print(ikFrameTarget)
         ikSuccess = self._ikSolver.CartToJnt(ikJointInitial, ikFrameTarget, ikJointFinal)
 
         angles = []
@@ -60,7 +66,6 @@ class Solver:
             angles.append(math.degrees(angle))
 
         return angles
-
 
     def forward_solve(self, current_angles):
         """Finds the (x, y, z) position of the end effector of the arm.

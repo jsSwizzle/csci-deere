@@ -5,8 +5,8 @@ class PySegment():
         # default values and function
         self.function = function
         self.default_value = default
-        self.min_value = min
-        self.max_value = max
+        self.min_value = min_value
+        self.max_value = max_value
         # current values
         self.current_val = current_val
         self.joint_no = joint_no

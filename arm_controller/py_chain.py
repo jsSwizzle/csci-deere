@@ -8,6 +8,13 @@ class PyChain():
     def number_of_segments(self):
         return len(self.segments)
 
+    def number_of_joints(self):
+        count = 0
+        for segment in self.segments:
+            if segment.joint_rot != None:
+                count += 1
+        return count
+
     def push_segment(self, new_segment):
         for segment in self.segments:
             if segment.id == new_segment.id:

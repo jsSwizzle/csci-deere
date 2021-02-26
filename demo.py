@@ -30,8 +30,8 @@ if __name__ == '__main__':
     print('INITIAL FK SOLVE ON DEFAULTS')
     print(f'FK Coords: {coords}\nFK RPY: {rpy}\n')
 
-    angles = mySolver.inverse_solve(current_angles, [0.0, 150.0, 0.0], [0.0, 0.0, 0.0])
-    print('IK SOLVE TO (0, 150, 0) WITH ZEROED RPY')
+    angles = mySolver.inverse_solve(current_angles, [0.0, 150.0, 90.0], [0.0, 0.0, 0.0])
+    print('IK SOLVE TO (0, 300, 100) WITH ZEROED RPY')
     print(f'IK Solution: {angles}\n')
 
     coords, rpy = mySolver.forward_solve(angles)
