@@ -1886,3 +1886,11 @@ venv/Scripts/python.exe
 venv/Scripts/pythonw.exe
 .idea/workspace.xml~
 .idea/workspace.xml
+venv/Lib/site-packages/squaternion-0.3.2.dist-info/INSTALLER
+venv/Lib/site-packages/squaternion-0.3.2.dist-info/LICENSE
+venv/Lib/site-packages/squaternion-0.3.2.dist-info/METADATA
+venv/Lib/site-packages/squaternion-0.3.2.dist-info/RECORD
+venv/Lib/site-packages/squaternion-0.3.2.dist-info/REQUESTED
+venv/Lib/site-packages/squaternion-0.3.2.dist-info/WHEEL
+venv/Lib/site-packages/squaternion/__init__.py
+venv/Lib/site-packages/squaternion/squaternion.py
