@@ -85,10 +85,9 @@ class Plotter:
         lines = ax.plot3D(xs, ys, zs)
         plt.setp(lines, color='r', linewidth=2.0, marker='+', mew=1.0, mec='b')
         plt.grid(True)
-        ax.set_xlabel('x')
-        ax.set_ylabel('y')
-        ax.set_zlabel('z')
-        ax.step(.2, .2)
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
         plt.show()
 
     def create_lines(coords: [[[]]], ax):
@@ -99,7 +98,7 @@ class Plotter:
             zs = [item[2] for item in c]
             # print(f'{xs}, {ys}, {zs}')
             ln = ax.plot3D(xs, ys, zs)
-            plt.setp(ln, marker='+', mec='k')
+            plt.setp(ln, marker='+', mec='k', mew=.8)
             lines.append(ln)
         ax.set_xlim3d(-300, 300)
         ax.set_ylim3d(-300, 300)
@@ -117,9 +116,7 @@ class Plotter:
         yds = calculateDeltas(y0s, y1s)
         z0s, z1s = [item[2] for item in coords1], [item[2] for item in coords2]
         zds = calculateDeltas(z0s, z1s)
-        ln0 = ax.plot3D(x0s, y0s, z0s)
-        plt.setp(ln0, marker='+', mec='k')
-        lines.append(ln0)
+
         currSteps = steps - 1
         while currSteps > 0:
             xs, ys, zs = [], [], []
@@ -130,14 +127,17 @@ class Plotter:
             for i, (z, d) in enumerate(zip(z1s, zds)):
                 zs.append(z - (d / steps * currSteps))
             ln = ax.plot3D(xs, ys, zs)
-            plt.setp(ln, alpha=1 - (currSteps / steps))
+            plt.setp(ln, marker='.', mec='b', mew=1, alpha=1 - (currSteps / steps))
             lines.append(ln)
             currSteps -= 1
         ln1 =ax.plot3D(x1s, y1s, z1s)
-        plt.setp(ln1, marker='x', mec='k')
+        plt.setp(ln1, marker='x', mec='r', mew=.8)
         lines.append(ln1)
-        ax.set_xlim3d(-300, 300)
-        ax.set_ylim3d(-300, 300)
+        ln0 = ax.plot3D(x0s, y0s, z0s)
+        plt.setp(ln0, marker='+', mec='k')
+        lines.append(ln0)
+        ax.set_xlim3d(-150, 150)
+        ax.set_ylim3d(-150, 150)
         ax.set_zlim3d(0, 300)
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
@@ -145,16 +145,16 @@ class Plotter:
         return lines
 
 
-test_coordinates1 = [[0, 0, 0], [0, 0, 1], [-50, -50, 150], [0, 50, 20], [10, 10, 150]]
-test_coordinates2 = [[0, 0, 0], [30, 0, 180], [-50, -50, 1.8], [0, 40, 220], [20, 150, 20]]
-test_coordinates3 = [[0, 0, 0], [50, 0, 50], [70, -50, 1], [0, 40, 70], [120, 70, 120]]
+test_coordinates1 = [[0, 0, 0], [0, 0, 100], [-50, -50, 150], [0, 50, 20], [100, 50, 150]]
+test_coordinates2 = [[0, 0, 0], [30, 0, 180], [-50, -50, 180], [0, 40, 220], [20, 150, 20]]
+test_coordinates3 = [[0, 0, 0], [50, 0, 50], [70, -50, 100], [0, 40, 170], [120, 70, 120]]
 
-# if __name__ == '__main__':
-#     ax = plt.axes(projection='3d')
-# # #
-# #     Plotter.create_lines([test_coordinates1, test_coordinates2, test_coordinates3], ax);
-#     Plotter.create_timelapse(test_coordinates1, test_coordinates3, ax, 4)
-#     Plotter.create_timelapse(test_coordinates1, test_coordinates2, ax, 4)
-#     plt.show()
+if __name__ == '__main__':
+    ax = plt.axes(projection='3d')
+# #
+#     Plotter.create_lines([test_coordinates1, test_coordinates2, test_coordinates3], ax);
+#     Plotter.create_timelapse(test_coordinates1, test_coordinates2, ax, 20)
+    Plotter.create_timelapse(test_coordinates2, test_coordinates3, ax, 30)
+    plt.show()
     # plot_arm(FakeArm())
     # Plotter.plot_arm3D(FakeArm())
