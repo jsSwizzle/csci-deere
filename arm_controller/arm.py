@@ -9,10 +9,10 @@ are inherited from base Robot class.
     arm.getpos()
     arm.moveto(1.2,3.4,5.6)
 """
-from .robot import Robot
-from .solver import Solver
-from .py_chain import PyChain
-from .py_segment import PySegment
+from robot import Robot
+from solver import Solver
+from py_chain import PyChain
+from py_segment import PySegment
 from adafruit_servokit import ServoKit
 
 class Arm(Robot):
@@ -28,12 +28,12 @@ class Arm(Robot):
         wrist_pitch_segment = PySegment('seg5', 'wrist_pitch', 80.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,30.17], 'Y', joint_no=5)
 
         self._chain = PyChain()
-        myChain.append_segment(world_segment)
-        myChain.append_segment(waist_segment)
-        myChain.append_segment(shoulder_segment)
-        myChain.append_segment(elbow_segment)
-        myChain.append_segment(wrist_roll_segment)
-        myChain.append_segment(wrist_pitch_segment)
+        self._chain.append_segment(world_segment)
+        self._chain.append_segment(waist_segment)
+        self._chain.append_segment(shoulder_segment)
+        self._chain.append_segment(elbow_segment)
+        self._chain.append_segment(wrist_roll_segment)
+        self._chain.append_segment(wrist_pitch_segment)
 
         self._servo_speed = 5.0
         self._claw_value = 0.0
