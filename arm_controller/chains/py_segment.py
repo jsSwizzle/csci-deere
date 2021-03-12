@@ -22,10 +22,10 @@ class PySegment():
         self.default_value = default
         self.min_value = min_value
         self.max_value = max_value
-        if current_value == -1:
+        if current_val == -1:
             self.current_val = default
         else:
-            self.current_val = current_value
+            self.current_val = current_val
         self.joint_no = joint_no
         self.rotation = rotation
         self.translation = translation
