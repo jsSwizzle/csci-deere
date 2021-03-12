@@ -23,9 +23,9 @@ class MechatronicsArm(AbstractArm):
         """
         world_segment = PySegment('seg0', 'world', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56.0], None)
         waist_segment = PySegment('seg1', 'waist', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,42.93], 'Z', joint_no=0)
-        shoulder_segment = PySegment('seg2', 'shoulder', 30.0, 15.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,120.0], 'Y', joint_no=1)
-        elbow_segment = PySegment('seg3', 'elbow', 35.0, 0.0, 60.0, [0.0,0.0,0.0], [0.0,0.0,118.65], 'Y', joint_no=2)
-        wrist_roll_segment = PySegment('seg4', 'wrist_roll', 140.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,60.028], 'Z', joint_no=4)
+        shoulder_segment = PySegment('seg2', 'shoulder', 150.0, 15.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,120.0], 'Y', joint_no=1)
+        elbow_segment = PySegment('seg3', 'elbow', 25.0, 0.0, 60.0, [0.0,0.0,0.0], [0.0,0.0,118.65], 'Y', joint_no=2)
+        wrist_roll_segment = PySegment('seg4', 'wrist_roll', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,60.028], 'Z', joint_no=4)
         wrist_pitch_segment = PySegment('seg5', 'wrist_pitch', 80.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,30.17], 'Y', joint_no=5)
 
         self._chain = PyChain()
@@ -36,7 +36,8 @@ class MechatronicsArm(AbstractArm):
         self._chain.append_segment(wrist_roll_segment)
         self._chain.append_segment(wrist_pitch_segment)
 
-        self._servo_speed = 5.0
+        self._servo_speed = 10.0
+        self._claw_joint_no = 6
         self._claw_value = 0.0
         self._default_claw_value = 80.0
         self._solver = PyKDLSolver(self._chain)
@@ -67,7 +68,7 @@ class MechatronicsArm(AbstractArm):
         Returns:
             ss {float} -- Returns the new servo speed.
         """
-        if ss > 1.0 and ss < 10.0:
+        if ss > 1.0:
             self._servo_speed = ss
         return self._servo_speed
 
@@ -92,15 +93,43 @@ class MechatronicsArm(AbstractArm):
                 self.set_joint(segment, angles[i])
                 i += 1
 
+    def open_claw(self, value=80.0):
+        """Opens the claw of the robot arm.
+
+        Opens the claw of the robot arm, the default value is 80 degrees but any
+        value between 0.0 and 180.0 can be entered (for best results use 90.0 as maximum for opening).
+
+        Args:
+            value {float} -- degree to set claw servo to.
+        """
+        if value > 0.0 || value < 180.0:
+            self._kit.servo[self._claw_joint_no].angle = value
+            self._claw_value = value
+
+    def close_claw(self, value=30.0):
+        """Closes the claw of the robot arm.
+
+        Closes the claw of the robot arm, the default value is 30 degrees but any
+        value between 0.0 and 180.0 can be entered (for best results use 30.0 as the minimum for closing).
+
+        Args:
+            value {float} -- degree to set claw servo to.
+        """
+        if value > 0.0 || value < 180.0:
+            self._kit.servo[self._claw_joint_no].angle = value
+            self._claw_value = value
+
     def set_default_position(self):
         """Loads the default position for the robot arm.
 
         Sets each servo to its default position found in the servo_info dictionary
         created during class initialization.
         """
+        self.set_joint(self._chain.segments[2])
         for segment in self._chain.segments:
             if segment.joint_no != -1:
                 self.set_joint(segment, segment.default_value)
+        self.open_claw()
 
     def set_joint(self, segment, value):
         """Moves the specified segment to the given value.
