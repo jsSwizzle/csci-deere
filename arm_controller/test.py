@@ -9,18 +9,6 @@ from py_segment import PySegment
 from adafruit_servokit import ServoKit
 from arm import Arm
 
-class Solver(unittest.TestCase):
-    """Unit testing class for solver class methods
-    """
-    def test_inverse_solve(self):
-        #ToDo determine test cases
-
-    def test_forward_solve(self):
-        #ToDo determine test cases
-
-    def test_segmented_forward_solve(self):
-        #ToDo determine test cases
-
 class Py_Chain(unittest.TestCase):
     """Unit testing class for py_chain class methods
     """
