@@ -115,7 +115,7 @@ class MechatronicsArm(AbstractArm):
         Args:
             value {float} -- degree to set claw servo to.
         """
-        if value > 0.0 || value < 180.0:
+        if value > 0.0 or value < 180.0:
             self._kit.servo[self._claw_joint_no].angle = value
             self._claw_value = value
 
