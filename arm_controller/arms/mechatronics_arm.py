@@ -9,6 +9,7 @@ are inherited from abstract base Arm class.
     arm.getpos()
     arm.moveto(1.2,3.4,5.6)
 """
+from time import sleep
 from arm_controller.arms.abstract_arm import AbstractArm
 from arm_controller.solvers.pykdl_solver import PyKDLSolver
 from arm_controller.chains.py_chain import PyChain
