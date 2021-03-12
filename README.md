@@ -12,7 +12,7 @@ This library requires at least Python Version 3, and is OS Independent without t
     * To simply install to Python run: `pip3 install .`
     * To install in developer mode run: `pip3 install -e .` (developer mode sets a link to this directory, and allows for a live working copy to be used)
 
-**If you are using Orocos KDL Library:** follow the instructions here to download and install the Orocos Kinematics and Dynamics Library (**Note:** this installation assumes you using a Debian/Ubuntu OS!)
+**If you are using Orocos KDL Library:** follow the instructions here `github.com/orocos/orocos_kinematics_dynamics` to download and install the Orocos Kinematics and Dynamics Library (**Note:** this installation assumes you using a Debian/Ubuntu OS!)
 
 ## Features
 
