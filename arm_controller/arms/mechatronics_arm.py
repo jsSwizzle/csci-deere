@@ -125,7 +125,7 @@ class MechatronicsArm(AbstractArm):
         Sets each servo to its default position found in the servo_info dictionary
         created during class initialization.
         """
-        self.set_joint(self._chain.segments[2])
+        self.set_joint(self._chain.segments[2], self._chain.segments[2].default_value)
         for segment in self._chain.segments:
             if segment.joint_no != -1:
                 self.set_joint(segment, segment.default_value)
