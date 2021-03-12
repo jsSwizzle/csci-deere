@@ -2,7 +2,7 @@
 """
 
 class PySegment():
-    def __init__(self, segment_id, function, default, min_value, max_value, rotation, translation, joint_rot, current_val=-1, joint_no=-1):
+    def __init__(self, segment_id, function, default, min_value, max_value, rotation, translation, joint_rot, current_val=0.0, joint_no=-1):
         """Basic constructor for PySegment.
 
         Args:
@@ -14,7 +14,7 @@ class PySegment():
             rotation {list} -- list of floats defining the rotation of the segmens frame, given as rotations around ZYX respectively.
             translation {list} -- list of floats defining the translation of the segments frame in 3 cartesian dimensions.
             joint_rot {str} -- defines the axis for which the joint rotates around (acceptable values None, 'X', 'Y', 'Z').
-            current_val {float} -- holds the current value of the joint for the given segment (default is default position).
+            current_val {float} -- holds the current value of the joint for the given segment (default is 0.0).
             joint_no {int} -- joint number for purposes of setting your own joint order for ServoKit (default -1).
         """
         self.id = segment_id
@@ -22,10 +22,7 @@ class PySegment():
         self.default_value = default
         self.min_value = min_value
         self.max_value = max_value
-        if current_val == -1:
-            self.current_val = default
-        else:
-            self.current_val = current_val
+        self.current_val = current_val
         self.joint_no = joint_no
         self.rotation = rotation
         self.translation = translation
