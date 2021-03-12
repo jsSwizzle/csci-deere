@@ -100,7 +100,7 @@ class MechatronicsArm(AbstractArm):
         value between 0.0 and 180.0 can be entered (for best results use 90.0 as maximum for opening).
 
         Args:
-            value {float} -- degree to set claw servo to.
+            value {float} -- degree to set claw servo to (default is 80.0).
         """
         if value > 0.0 or value < 180.0:
             self._kit.servo[self._claw_joint_no].angle = value
@@ -113,7 +113,7 @@ class MechatronicsArm(AbstractArm):
         value between 0.0 and 180.0 can be entered (for best results use 30.0 as the minimum for closing).
 
         Args:
-            value {float} -- degree to set claw servo to.
+            value {float} -- degree to set claw servo to (default is 30.0).
         """
         if value > 0.0 or value < 180.0:
             self._kit.servo[self._claw_joint_no].angle = value
@@ -125,8 +125,7 @@ class MechatronicsArm(AbstractArm):
         Sets each servo to its default position found in the servo_info dictionary
         created during class initialization.
         """
-        self.set_joint(self._chain.segments[2], self._chain.segments[2].default_value)
-        for segment in self._chain.segments:
+        for segment in self._chain.segments[::-1]:
             if segment.joint_no != -1:
                 self.set_joint(segment, segment.default_value)
         self.open_claw()
