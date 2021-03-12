@@ -22,8 +22,8 @@ class MechatronicsArm(AbstractArm):
         """
         world_segment = PySegment('seg0', 'world', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56.0], None)
         waist_segment = PySegment('seg1', 'waist', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,42.93], 'Z', joint_no=0)
-        shoulder_segment = PySegment('seg2', 'shoulder', 30.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,120.0], 'Y', joint_no=1)
-        elbow_segment = PySegment('seg3', 'elbow', 35.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,118.65], 'Y', joint_no=2)
+        shoulder_segment = PySegment('seg2', 'shoulder', 30.0, 15.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,120.0], 'Y', joint_no=1)
+        elbow_segment = PySegment('seg3', 'elbow', 35.0, 0.0, 60.0, [0.0,0.0,0.0], [0.0,0.0,118.65], 'Y', joint_no=2)
         wrist_roll_segment = PySegment('seg4', 'wrist_roll', 140.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,60.028], 'Z', joint_no=4)
         wrist_pitch_segment = PySegment('seg5', 'wrist_pitch', 80.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,30.17], 'Y', joint_no=5)
 
@@ -38,7 +38,7 @@ class MechatronicsArm(AbstractArm):
         self._servo_speed = 5.0
         self._claw_value = 0.0
         self._default_claw_value = 80.0
-        self._solver = Solver(self._chain)
+        self._solver = PyKDLSolver(self._chain)
         self._kit = ServoKit(channels=16)
 
     def get_pos(self):
@@ -51,7 +51,8 @@ class MechatronicsArm(AbstractArm):
             current_xyz {list} -- a list containing the (x, y, z) position of the claw.
             current_rpy {list} -- a list containing the (r, p, y) of the claw.
         """
-        current_xyz, current_rpy = self._solver.forward_solve(self._current_angles)
+        current_angles = self._chain.get_current_values()
+        current_xyz, current_rpy = self._solver.forward_solve(current_angles)
         return current_xyz, current_rpy
 
     def set_speed(self, ss):
@@ -107,6 +108,23 @@ class MechatronicsArm(AbstractArm):
             segment {PySegment} -- segment to move.
             value {float} -- value to apply to joint.
         """
-        # TODO: figure out how the speed/rate can be implemented
-        self._kit.servo[segment.joint_no].angle = value
+        target_value = value
+        current_value = segment.current_val
+        step = self._servo_speed
+
+        if(current_value > target_value):
+            while((current_value - target_value) >= step):
+                current_value = current_value - step
+                self._kit.servo[segment.joint_no].angle = current_value
+                sleep(1)
+            if((current_value - target_value) != 0.0):
+                self._kit.servo[segment.joint_no].angle = target_value
+        elif(target_value > current_value):
+            while((target_value - current_value) >= step):
+                current_value = current_value + step
+                self._kit.servo[segment.joint_no].angle = current_value
+                sleep(1)
+            if((target_value - current_value) != 0.0):
+                self._kit.servo[segment.joint_no].angle = target_value
+
         segment.current_val = value
