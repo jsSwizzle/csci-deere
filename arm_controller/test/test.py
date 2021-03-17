@@ -7,18 +7,6 @@ from arm_controller.solvers import *
 from arm_controller.chains import *
 from adafruit_servokit import ServoKit
 
-class Solver(unittest.TestCase):
-    """Unit testing class for solver class methods
-    """
-    def test_inverse_solve(self):
-        #ToDo determine test cases
-
-    def test_forward_solve(self):
-        #ToDo determine test cases
-
-    def test_segmented_forward_solve(self):
-        #ToDo determine test cases
-
 class Py_Chain(unittest.TestCase):
     """Unit testing class for py_chain class methods
     """
