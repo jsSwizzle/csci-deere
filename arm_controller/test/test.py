@@ -2,12 +2,10 @@
    with return values in robot arm library.
 """
 import unittest
-from robot import Robot
-from solver import Solver
-from py_chain import PyChain
-from py_segment import PySegment
+from arm_controller.arms import *
+from arm_controller.solvers import *
+from arm_controller.chains import *
 from adafruit_servokit import ServoKit
-from arm import Arm
 
 class Solver(unittest.TestCase):
     """Unit testing class for solver class methods
@@ -58,4 +56,3 @@ if __name__ == '__main__':
     """Runs unit tests.
     """
     unittest.main()
-

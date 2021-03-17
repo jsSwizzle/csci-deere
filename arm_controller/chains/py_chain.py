@@ -1,6 +1,6 @@
 """Contains PyChain class to simulate PyKDL Chain with the use of PySegment's.
 """
-from py_segment import PySegment
+from arm_controller.chains.py_segment import PySegment
 
 class PyChain():
     def __init__(self):

@@ -4,7 +4,15 @@ This library was developed by NDSU CSCI 445 students in the capstone class in th
 
 ## Installation
 
-*Insert installation instructions for installing library*
+This library requires at least Python Version 3, and is OS Independent without the use of the Orocos KDL library.
+
+1. Begin by cloning this repository inside your workspace
+2. *cd* into the directory
+3. Depending on your needs execute one of the following commands
+    * To simply install to Python run: `pip3 install .`
+    * To install in developer mode run: `pip3 install -e .` (developer mode sets a link to this directory, and allows for a live working copy to be used)
+
+**If you are using Orocos KDL Library:** follow the instructions here `github.com/orocos/orocos_kinematics_dynamics` to download and install the Orocos Kinematics and Dynamics Library (**Note:** this installation assumes you using a Debian/Ubuntu OS!)
 
 ## Features
 

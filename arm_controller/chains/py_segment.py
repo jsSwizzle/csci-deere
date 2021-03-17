@@ -14,7 +14,7 @@ class PySegment():
             rotation {list} -- list of floats defining the rotation of the segmens frame, given as rotations around ZYX respectively.
             translation {list} -- list of floats defining the translation of the segments frame in 3 cartesian dimensions.
             joint_rot {str} -- defines the axis for which the joint rotates around (acceptable values None, 'X', 'Y', 'Z').
-            current_val {float} -- holds the current value of the joint for the given segment (default 0.0).
+            current_val {float} -- holds the current value of the joint for the given segment (default is 0.0).
             joint_no {int} -- joint number for purposes of setting your own joint order for ServoKit (default -1).
         """
         self.id = segment_id

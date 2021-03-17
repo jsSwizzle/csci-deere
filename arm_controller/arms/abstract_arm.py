@@ -2,14 +2,14 @@
 """
 from abc import ABC,abstractmethod
 
-class Robot(ABC):
+class AbstractArm(ABC):
 
     @abstractmethod
     def __init__(self):
         """Constructs Robot class.
         """
 
-    @abstractmethod
+    # abstract method
     def moveto(self, x_pos, y_pos, z_pos):
         """Moves the arm to the specified position.
 
@@ -23,7 +23,7 @@ class Robot(ABC):
         """
         pass
 
-    @abstractmethod
+    # abstract method
     def getpos(self):
         """Calculates and returns current position of the arm.
 
@@ -35,13 +35,13 @@ class Robot(ABC):
         """
         pass
 
-    @abstractmethod
-    def setspeed(self, s):
+    # abstract method
+    def setspeed(self, ss):
         """Set's the speed at which the servo's move.
 
         Set's the arm rate of speed at which the servo's move into position.
 
         Args:
-            s {int} -- Rate of speed on a 1-10 scale: 1 being slowest, 10 being fastest.
+            ss {int} -- Rate of speed on a 1-10 scale: 1 being slowest, 10 being fastest.
         """
         pass

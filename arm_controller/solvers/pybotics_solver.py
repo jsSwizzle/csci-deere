@@ -1,16 +1,17 @@
-"""Implementation of Solver Class to solve Kinematics of Arm Class.
+"""Implementation of Solver Class to solve Kinematics of Arm Class using PyBotics library.
 """
-from py_chain import PyChain
-from py_segment import PySegment
-# from PyKDL import *
-import math
+import numpy as np
+from pybotics.robot import Robot
+from pybotics.predefined_models import ur10
+from arm_controller.chains.py_chain import PyChain
+from arm_controller.chains.py_segment import PySegment
 
-class Solver:
+class PyBoticsSolver:
 
     def __init__(self, chain):
         """Basic constructor for Solver class.
         """
-        # self._kdlChain = Chain()
+        self._rbt = Robot.from_parameters(ur10())
         # joint_mins = JntArray(chain.number_of_joints())
         # joint_maxs = JntArray(chain.number_of_joints())
         # i = 0
@@ -32,10 +33,6 @@ class Solver:
         #         joint_mins[i] = math.radians(segment.min_value)
         #         joint_maxs[i] = math.radians(segment.max_value)
         #         i += 1
-        #
-        # self._fkSolver = ChainFkSolverPos_recursive(self._kdlChain)
-        # self._ikSolverVel = ChainIkSolverVel_pinv(self._kdlChain)
-        # self._ikSolver = ChainIkSolverPos_NR_JL(self._kdlChain, joint_mins, joint_maxs, self._fkSolver, self._ikSolverVel, 10_000)
 
     def inverse_solve(self, initial_angles, target_coords, target_rpy):
         """Finds the angles for each joint of the arm given a target end effector.
@@ -51,23 +48,7 @@ class Solver:
         Returns:
             angles {list} -- list of angles for each rotating joint in the chain.
         """
-
-        # ikJointFinal = JntArray(self._kdlChain.getNrOfJoints())
-        # ikJointInitial = JntArray(self._kdlChain.getNrOfJoints())
-        # j = 0
-        # for angle in initial_angles:
-        #     ikJointInitial[j] = math.radians(angle)
-        #     j += 1
-        # target_rot = Rotation.RPY(math.radians(target_rpy[0]), math.radians(target_rpy[1]), math.radians(target_rpy[2]))
-        # target_vec = Vector(target_coords[0], target_coords[1], target_coords[2])
-        # ikFrameTarget = Frame(target_rot, target_vec)
-        # ikSuccess = self._ikSolver.CartToJnt(ikJointInitial, ikFrameTarget, ikJointFinal)
-        #
-        # angles = []
-        # for angle in ikJointFinal:
-        #     angles.append(math.degrees(angle))
-        #
-        # return angles
+        return self._rbt.ik(target_coords)
 
     def forward_solve(self, current_angles):
         """Finds the (x, y, z, roll, pitch, yaw) position of the end effector of the chain.
@@ -82,25 +63,6 @@ class Solver:
             coords {list} -- list containing XYZ coordinates of the end effector.
             rpy {list} -- list containing Roll, Pitch, and Yaw of the end effector.
         """
-        # fkJointInitial = JntArray(self._kdlChain.getNrOfJoints())
-        #
-        # i = 0
-        # for angle in current_angles:
-        #     fkJointInitial[i] = math.radians(angle)
-        #     i += 1
-        #
-        # fkEffectorFrame = Frame()
-        # fkSuccess = self._fkSolver.JntToCart(fkJointInitial, fkEffectorFrame)
-        #
-        # coords = []
-        # for i in fkEffectorFrame.p:
-        #     coords.append(i)
-        #
-        # rpy = []
-        # for i in fkEffectorFrame.M.GetRPY():
-        #     rpy.append(math.degrees(i))
-        #
-        # return coords, rpy
 
     def segmented_forward_solve(self, current_angles):
         """Finds the (x, y, z) position of every joint in the chain (including the end effector).
@@ -108,23 +70,3 @@ class Solver:
         Returns:
             coords {list} -- 2 dimensional list containing sets of (X, Y, Z) coordinates of each joint.
         """
-        # coords = []
-        # fkJointInitial = JntArray(self._kdlChain.getNrOfJoints())
-        #
-        # i = 0
-        # for angle in current_angles:
-        #     fkJointInitial[i] = math.radians(angle)
-        #     i += 1
-        #
-        # for j in range(0, self._kdlChain.getNrOfSegments()):
-        #
-        #     fkEffectorFrame = Frame()
-        #     fkSuccess = self._fkSolver.JntToCart(fkJointInitial, fkEffectorFrame, j)
-        #
-        #     intermediate_coords = []
-        #     for i in fkEffectorFrame.p:
-        #         intermediate_coords.append(i)
-        #     coords.append(intermediate_coords)
-        #
-        # coords.append(self.forward_solve(current_angles)[0])
-        # return coords
