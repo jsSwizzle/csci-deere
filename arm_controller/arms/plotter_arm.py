@@ -5,6 +5,7 @@ import math
 import numpy
 
 import matplotlib.pyplot as plt
+import matplotlib.animation as anm
 from mpl_toolkits import mplot3d
 
 from arm_controller.arms.abstract_arm import AbstractArm
@@ -139,6 +140,8 @@ class PlotterArm(AbstractArm):
             ln = ax.plot3D(xs, ys, zs)
             plt.setp(ln, marker='+', mec='k', mew=.8)
             lines.append(ln)
+        if ax is None:
+            return lines
         ax.set_xlim3d(-300, 300)
         ax.set_ylim3d(-300, 300)
         ax.set_zlim3d(0, 300)
@@ -182,3 +185,7 @@ class PlotterArm(AbstractArm):
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
         return lines
+
+
+    def create_timelapse_anim(i, lines):
+        PlotterArm.create_lines(None, lines[i % len(lines)])

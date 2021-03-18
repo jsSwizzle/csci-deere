@@ -1,12 +1,12 @@
 """Implementation of Solver Class to solve Kinematics of Arm Class using IKPy library.
 """
 import numpy as np
-from ikpy import link as ipl, chain as ipc, inverse_kinematics as ipik
 from arm_controller.chains.py_chain import PyChain
 from arm_controller.chains.py_segment import PySegment
+from arm_controller.chains.py_urdf import PyURDF
+from roboticstoolbox import ERobot, ELink
 
-
-class IKPySolver:
+class RTBSolver:
 
     def __init__(self, chain: PyChain):
         """Basic constructor for Solver class.
@@ -14,23 +14,9 @@ class IKPySolver:
         # links = [ipl.OriginLink()]
         links = []
         for i, s in enumerate(chain.segments):
-            axis = []
-            if (s.joint_rot == 'X'):
-                axis = [1, 0, 0]
-            elif (s.joint_rot == 'Y'):
-                axis = [0, 1, 0]
-            elif (s.joint_rot == 'Z'):
-                axis = [0, 0, 1]
-            else:
-                axis = [0, 0, 0]
-            link = ipl.URDFLink(
-                name=s.function,
-                translation_vector=s.translation,
-                orientation=s.rotation,
-                rotation=axis,
-                bounds=(s.min_value, s.max_value)
-            )
+            link = PyURDF(s)
             links.append(link)
+            elink = ELink()
         self._chain = ipc.Chain(links)
 
     def inverse_solve(self, initial_angles, target_coords, target_rpy):
@@ -70,3 +56,10 @@ class IKPySolver:
         Returns:
             coords {list} -- 2 dimensional list containing sets of (X, Y, Z) coordinates of each joint.
         """
+
+
+def main():
+    print('h')
+
+if __name__ == '__main__':
+    main()

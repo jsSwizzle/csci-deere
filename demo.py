@@ -1,11 +1,12 @@
 """File to demo arm_controller module.
 """
-from arm_controller.py_segment import PySegment
-from arm_controller.py_chain import PyChain
-from arm_controller.solver import Solver
-from arm_controller.plotter import Plotter
+from arm_controller.chains.py_segment import PySegment
+from arm_controller.chains.py_chain import PyChain
+from arm_controller.solvers.pykdl_solver import PyKDLSolver
+from arm_controller.arms.plotter_arm import PlotterArm
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
+import matplotlib.animation as anm
 
 if __name__ == '__main__':
     # construct segments for the chain
@@ -33,7 +34,7 @@ if __name__ == '__main__':
     current_angles = myChain.get_current_values()
     print(f'Current Joint Angles: {current_angles}\n')
 
-    mySolver = Solver(myChain)
+    mySolver = PyKDLSolver(myChain)
     coords, rpy = mySolver.forward_solve(current_angles)
     print('INITIAL FK SOLVE ON CURRENT ANGLES')
     print(f'FK Coords: {coords}\nFK RPY: {rpy}\n')
@@ -66,6 +67,6 @@ if __name__ == '__main__':
     list_o_coords2 = mySolver.segmented_forward_solve(angles)
 
     ax = plt.axes(projection='3d')
-    # Plotter.create_timelapse(list_o_coords, list_o_coords2, ax, 8)
-    Plotter.create_lines([list_o_coords, list_o_coords2], ax)
+    PlotterArm.create_timelapse(list_o_coords, list_o_coords2, ax, 8)
+    PlotterArm.create_lines([list_o_coords, list_o_coords2], ax)
     plt.show()

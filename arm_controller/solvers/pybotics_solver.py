@@ -6,7 +6,20 @@ from pybotics.predefined_models import ur10
 from arm_controller.chains.py_chain import PyChain
 from arm_controller.chains.py_segment import PySegment
 
+
 class PyBoticsSolver:
+    ur10_MDH = [[0, 0, 0, 118],
+                [np.pi / 2, 0, np.pi, 0],
+                [0, 612.7, 0, 0],
+                [0, 571.6, 0, 163.9],
+                [-np.pi / 2, 0, 0, 115.7],
+                [np.pi / 2, 0, np.pi, 92.2]]
+    test_MDH = [[0, 0, 0, 98.507],
+                [np.pi / 2, 120, 0, 0],
+                [0, 118.65, 0, 0],
+                [-np.pi / 2, 0, 0, 60.028],
+                [np.pi / 2, 0, 0, 60]
+                ]
 
     def __init__(self, chain):
         """Basic constructor for Solver class.
@@ -70,3 +83,12 @@ class PyBoticsSolver:
         Returns:
             coords {list} -- 2 dimensional list containing sets of (X, Y, Z) coordinates of each joint.
         """
+
+
+def main():
+    pbSolv = PyBoticsSolver(PyChain())
+    print(pbSolv.inverse_solve([], [200, 120, 90], [0, 0, 0]))
+
+
+if __name__ == '__main__':
+    main()
