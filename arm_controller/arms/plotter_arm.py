@@ -189,3 +189,4 @@ class PlotterArm(AbstractArm):
 
     def create_timelapse_anim(i, lines):
         PlotterArm.create_lines(None, lines[i % len(lines)])
+

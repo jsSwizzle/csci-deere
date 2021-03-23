@@ -1,22 +1,11 @@
 from arm_controller.chains.py_chain import PyChain
 from arm_controller.chains.py_segment import PySegment
+import xml.etree.ElementTree as ET
 
-
+"""
+    URDF parser / static methods
+"""
 class PyURDF:
-    """
-    Our representation of URDF
-    """
-
-    def __init__(self, ps: PySegment):
-        if ps.joint_rot == 'X':
-            axis = [1, 0, 0]
-        elif ps.joint_rot == 'Y':
-            axis = [0, 1, 0]
-        elif ps.joint_rot == 'Z':
-            axis = [0, 0, 1]
-        else:
-            axis = [0, 0, 0]
-        self.name = ps.function
-        self.origin_xyz = ps.translation
-        self.origin_rpy = ps.rotation
-        self.axis_xyz = axis
+    def parse(self, filepath):
+        tree = ET.parse(source=filepath)
+        root = tree.getroot()
