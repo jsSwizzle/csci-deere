@@ -6,18 +6,20 @@ from arm_controller.chains.py_segment import PySegment
 from arm_controller.chains.py_urdf import PyURDF
 from roboticstoolbox import ERobot, ELink
 
+from arm_controller.chains.urdf_joint import URDFJoint
+
+
 class RTBSolver:
 
     def __init__(self, chain: PyChain):
         """Basic constructor for Solver class.
         """
-        # links = [ipl.OriginLink()]
         links = []
         for i, s in enumerate(chain.segments):
-            link = PyURDF(s)
+            link = URDFJoint(s)
             links.append(link)
             elink = ELink()
-        self._chain = ipc.Chain(links)
+        # self._chain = ipc.Chain(links)
 
     def inverse_solve(self, initial_angles, target_coords, target_rpy):
         """Finds the angles for each joint of the arm given a target end effector.
