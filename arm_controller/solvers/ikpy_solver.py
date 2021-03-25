@@ -15,11 +15,11 @@ class IKPySolver:
         links = []
         for i, s in enumerate(chain.segments):
             axis = []
-            if (s.joint_rot == 'X'):
+            if s.joint_rot == 'X':
                 axis = [1, 0, 0]
-            elif (s.joint_rot == 'Y'):
+            elif s.joint_rot == 'Y':
                 axis = [0, 1, 0]
-            elif (s.joint_rot == 'Z'):
+            elif s.joint_rot == 'Z':
                 axis = [0, 0, 1]
             else:
                 axis = [0, 0, 0]

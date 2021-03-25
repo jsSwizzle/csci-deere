@@ -1,5 +1,5 @@
 from arm_controller.chains.py_segment import PySegment
-
+import numpy as np
 
 class URDFJoint:
     """
@@ -18,3 +18,5 @@ class URDFJoint:
         self.origin_xyz = ps.translation
         self.origin_rpy = ps.rotation
         self.axis_xyz = axis
+        self.limit_lower = np.deg2rad(ps.min_value)
+        self.limit_upper = np.deg2rad(ps.max_value)

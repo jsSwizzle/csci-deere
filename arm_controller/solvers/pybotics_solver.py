@@ -87,7 +87,7 @@ class PyBoticsSolver:
 
 def main():
     pbSolv = PyBoticsSolver(PyChain())
-    print(pbSolv.inverse_solve([], [200, 120, 90], [0, 0, 0]))
+    print(pbSolv.inverse_solve([0,90,150,10,90,80,0], [200, 120, 90], [0, 0, 0]))
 
 
 if __name__ == '__main__':
