@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 
 from arm_controller.arms.abstract_arm import AbstractArm
-from arm_controller.solvers.pykdl_solver import PyKDLSolver
+from arm_controller.solvers.pykdl_solver import PyKDLSolver as Solver
 from arm_controller.chains.py_chain import PyChain
 from arm_controller.chains.py_segment import PySegment
 
