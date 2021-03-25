@@ -20,16 +20,20 @@ class PyURDF:
     def testParse(filepath, baseLink):
         """test parse that uses IKPy URDF parser to confirm against / validate our parser
         """
-        stuff = ipc.Chain(ipc.URDF.get_urdf_parameters(filepath, [baseLink]))
-        print(stuff)
-        defaultVals = [0, 90, 150, 10, 90, 80, 0]
+        chain = ipc.Chain(ipc.URDF.get_urdf_parameters(filepath, [baseLink]))
+        print(chain)
+        defaultVals = [0, 90, 30, 10, 90, 80, 0]
         joints0 = [np.deg2rad(item) for item in defaultVals]
-        joints1 = stuff.inverse_kinematics([-130, 120, 90], [90, 0, 0])
-        joints2 = stuff.inverse_kinematics([-130, 120, 90], [0, 0, 0])
+        joints1 = chain.inverse_kinematics([-.08, .06, .090], [0, 0, 0], 'X')
+        joints2 = chain.inverse_kinematics([-.08, .06, .090], [0, 0, 0], 'Z')
+        joints3 = chain.inverse_kinematics([-.12, .08, .190], [0, 0, 0])
+        joints4 = chain.inverse_kinematics([-.12, .08, .190], [0, 0, 90], 'Z')
         ax = plt.figure().add_subplot(111, projection='3d')
-        stuff.plot(joints0, ax)
-        stuff.plot(joints1, ax)
-        stuff.plot(joints2, ax)
+        chain.plot(joints0, ax)
+        chain.plot(joints1, ax)
+        chain.plot(joints2, ax)
+        chain.plot(joints3, ax)
+        chain.plot(joints4, ax)
         plt.show()
 
 

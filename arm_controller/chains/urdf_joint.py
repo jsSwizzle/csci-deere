@@ -1,10 +1,12 @@
 from arm_controller.chains.py_segment import PySegment
 import numpy as np
 
+
 class URDFJoint:
     """
     Our representation of URDF Joints for URDF-Compliant Solvers
     """
+
     def __init__(self, ps: PySegment):
         if ps.joint_rot == 'X':
             axis = [1, 0, 0]
