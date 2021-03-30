@@ -1,12 +1,10 @@
 """Implementation of Solver Class to solve Kinematics of Arm Class using IKPy library.
 """
-import numpy as np
 from arm_controller.chains.py_chain import PyChain
-from arm_controller.chains.py_segment import PySegment
-from arm_controller.chains.py_urdf import PyURDF
-from roboticstoolbox import ERobot, ELink
+import roboticstoolbox as rtb
+from roboticstoolbox import ELink
 
-from arm_controller.chains.urdf_joint import URDFJoint
+from arm_controller.urdf.urdf_joint import URDFJoint
 
 
 class RTBSolver:
@@ -15,11 +13,13 @@ class RTBSolver:
         """Basic constructor for Solver class.
         """
         links = []
-        for i, s in enumerate(chain.segments):
-            link = URDFJoint(s)
-            links.append(link)
-            elink = ELink()
-        # self._chain = ipc.Chain(links)
+        robot = rtb.models.URDF.Panda()
+        links, name = rtb.ERobot.urdf_to_ets_args(self, 'arm.urdf', './')
+        robot2 = rtb.ERobot(links)
+        # links = robot2.urdf_to_ets_args('../urdf/arm.urdf')
+        print(robot2)
+        qz = robot2.fkine(robot2.q, 'claw_end_link')
+        robot2.plot(robot2.q, 'pyplot')
 
     def inverse_solve(self, initial_angles, target_coords, target_rpy):
         """Finds the angles for each joint of the arm given a target end effector.
@@ -61,7 +61,9 @@ class RTBSolver:
 
 
 def main():
+    rbt = RTBSolver(None)
     print('h')
+
 
 if __name__ == '__main__':
     main()
