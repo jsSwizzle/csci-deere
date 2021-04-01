@@ -52,12 +52,3 @@ class URDFJoint:
         if limit is not None:
             self.limit_lower = limit.attrib['lower']
             self.limit_upper = limit.attrib['upper']
-
-    # def __init__(self, name, type, orgnxyz, orgnrpy, axis, lowr_lim, uppr_lim):
-    #     self.name = name
-    #     self.type = JointType(type)
-    #     self.origin_xyz = orgnxyz
-    #     self.origin_rpy = orgnrpy
-    #     self.axis_xyz = axis
-    #     self.limit_lower = lowr_lim
-    #     self.limit_upper = uppr_lim
