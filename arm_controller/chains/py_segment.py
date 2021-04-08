@@ -2,6 +2,7 @@
 """
 
 class PySegment():
+
     def __init__(self, segment_id, function, default, min_value, max_value, rotation, translation, joint_rot, current_val=0.0, joint_no=-1):
         """Basic constructor for PySegment.
 

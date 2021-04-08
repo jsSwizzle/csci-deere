@@ -5,7 +5,10 @@ from arm_controller.chains.py_segment import PySegment
 from PyKDL import *
 import math
 
-class PyKDLSolver:
+from arm_controller.solvers.abstract_solver import AbstractSolver
+
+
+class PyKDLSolver(AbstractSolver):
 
     def __init__(self, chain):
         """Basic constructor for Solver class.
@@ -35,9 +38,9 @@ class PyKDLSolver:
 
         self._fkSolver = ChainFkSolverPos_recursive(self._kdlChain)
         self._ikSolverVel = ChainIkSolverVel_pinv(self._kdlChain)
-        self._ikSolver = ChainIkSolverPos_NR_JL(self._kdlChain, joint_mins, joint_maxs, self._fkSolver, self._ikSolverVel, 10_000)
-
-    def inverse_solve(self, initial_angles, target_coords, target_rpy):
+        self._ikSolver = ChainIkSolverPos_NR_JL(self._kdlChain, joint_mins, joint_maxs, self._fkSolver,
+                                                self._ikSolverVel, 10_000)
+    def inverse_solve(self, target_coords=[0, 0, 0], target_rpy=[0, 0, 0], **kwargs) -> list[float]:
         """Finds the angles for each joint of the arm given a target end effector.
 
         Calculates the angles each joint needs to be at given the target end
@@ -51,6 +54,7 @@ class PyKDLSolver:
         Returns:
             angles {list} -- list of angles for each rotating joint in the chain.
         """
+        initial_angles = kwargs['initial_angles']
         ikJointFinal = JntArray(self._kdlChain.getNrOfJoints())
         ikJointInitial = JntArray(self._kdlChain.getNrOfJoints())
         j = 0
@@ -67,8 +71,7 @@ class PyKDLSolver:
             angles.append(math.degrees(angle))
 
         return angles
-
-    def forward_solve(self, current_angles):
+    def forward_solve(self, angles, **kwargs):
         """Finds the (x, y, z, roll, pitch, yaw) position of the end effector of the chain.
 
         Calculates the current (x, y, z, roll, pitch, yaw) position of the end
@@ -84,7 +87,7 @@ class PyKDLSolver:
         fkJointInitial = JntArray(self._kdlChain.getNrOfJoints())
 
         i = 0
-        for angle in current_angles:
+        for angle in angles:
             fkJointInitial[i] = math.radians(angle)
             i += 1
 

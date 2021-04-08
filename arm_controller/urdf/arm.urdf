@@ -14,6 +14,8 @@
     <material name="grey">
         <color rgba="0.3 0.3 0.3 1.0"/>
     </material>
+
+
     <link name="world_base_link">
         <visual>
             <origin xyz="0 0 .028" rpy="0 0 0"/>
@@ -23,6 +25,13 @@
             <material name="cyan1"/>
         </visual>
     </link>
+    <joint name="base" type="fixed">
+        <parent link="world_base_link"/>
+        <child link="base_waist_link"/>
+        <origin xyz="0 0 .0560" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+        <!--        <limit lower="-1.57" upper="1.57"/>-->
+    </joint>
     <link name="base_waist_link">
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -32,6 +41,13 @@
             <material name="white"/>
         </visual>
     </link>
+    <joint name="waist" type="revolute">
+        <parent link="base_waist_link"/>
+        <child link="waist_shoulder_link"/>
+        <origin xyz="0 0 .04293" rpy="0 0 1.57"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-1.57" upper="1.57" effort="1000.0" velocity="0.5"/>
+    </joint>
     <link name="waist_shoulder_link">
         <visual>
             <origin xyz="0 0 0" rpy="1.571 0 0"/>
@@ -41,6 +57,13 @@
             <material name="white"/>
         </visual>
     </link>
+    <joint name="shoulder" type="revolute">
+        <parent link="waist_shoulder_link"/>
+        <child link="shoulder_elbow_link"/>
+        <origin xyz="0 0 0" rpy="0 2.87979 0"/>
+        <axis xyz="0 -1 0"/>
+        <limit lower="0" upper="2.87979" effort="1000.0" velocity="0.5"/>
+    </joint>
     <link name="shoulder_elbow_link">
         <visual>
             <origin xyz="0 0 .06" rpy="0 0 0"/>
@@ -50,6 +73,13 @@
             <material name="cyan2"/>
         </visual>
     </link>
+    <joint name="elbow" type="revolute">
+        <parent link="shoulder_elbow_link"/>
+        <child link="elbow_wrist_roll_link"/>
+        <origin xyz="0 0 .11865" rpy="0 1.57 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="0" upper="1.0472" effort="1000.0" velocity="0.5"/>
+    </joint>
     <link name="elbow_wrist_roll_link">
         <visual>
             <origin xyz="0 0 .03" rpy="0 0 0"/>
@@ -59,6 +89,13 @@
             <material name="grey"/>
         </visual>
     </link>
+    <joint name="wrist_roll" type="revolute">
+        <parent link="elbow_wrist_roll_link"/>
+        <child link="wrist_roll_wrist_pitch_link"/>
+        <origin xyz="0 0 .060028" rpy="0 0 1.57"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="0" upper="3.14" effort="1000.0" velocity="0.5"/>
+    </joint>
     <link name="wrist_roll_wrist_pitch_link">
         <visual>
             <origin xyz="0 0 .015" rpy="0 0 0"/>
@@ -68,6 +105,13 @@
             <material name="cyan1"/>
         </visual>
     </link>
+    <joint name="wrist_pitch" type="revolute">
+        <parent link="wrist_roll_wrist_pitch_link"/>
+        <child link="wrist_pitch_claw_link"/>
+        <origin xyz="0 0 .03017" rpy="0 -1.309 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="0" upper="3.14" effort="1000.0" velocity="0.5"/>
+    </joint>
     <link name="wrist_pitch_claw_link">
         <visual>
             <origin xyz="0 0 0.015" rpy="0 0 0"/>
@@ -77,6 +121,13 @@
             <material name="white"/>
         </visual>
     </link>
+    <joint name="claw" type="fixed">
+        <parent link="wrist_pitch_claw_link"/>
+        <child link="claw_end_link"/>
+        <origin xyz="0 0 .03017" rpy="0 0 0"/>
+        <!--        <axis xyz="1 0 0"/>-->
+        <!--        <limit lower="0" upper="3.14"/>-->
+    </joint>
     <link name="claw_end_link">
         <visual>
             <origin xyz="0 0 .015" rpy="0 0 0"/>
@@ -86,6 +137,11 @@
             <material name="black"/>
         </visual>
     </link>
+    <joint name="claw_left" type="fixed">
+        <parent link="wrist_pitch_claw_link"/>
+        <child link="claw_left_link"/>
+        <origin xyz="0 .015 0" rpy="0 0 0"/>
+    </joint>
     <link name="claw_left_link">
         <visual>
             <origin xyz="0 .015 .03" rpy="0 0 0"/>
@@ -104,60 +160,6 @@
             <material name="white"/>
         </visual>
     </link>
-    <joint name="base" type="fixed">
-        <parent link="world_base_link"/>
-        <child link="base_waist_link"/>
-        <origin xyz="0 0 .0560" rpy="0 0 0"/>
-        <axis xyz="0 0 1"/>
-        <!--        <limit lower="-1.57" upper="1.57"/>-->
-    </joint>
-    <joint name="waist" type="revolute">
-        <parent link="base_waist_link"/>
-        <child link="waist_shoulder_link"/>
-        <origin xyz="0 0 .04293" rpy="0 0 1.57"/>
-        <axis xyz="0 0 1"/>
-        <limit lower="-1.57" upper="1.57" effort="1000.0" velocity="0.5"/>
-    </joint>
-    <joint name="shoulder" type="revolute">
-        <parent link="waist_shoulder_link"/>
-        <child link="shoulder_elbow_link"/>
-        <origin xyz="0 0 0" rpy="0 2.87979 0"/>
-        <axis xyz="0 -1 0"/>
-        <limit lower="0" upper="2.87979" effort="1000.0" velocity="0.5"/>
-    </joint>
-    <joint name="elbow" type="revolute">
-        <parent link="shoulder_elbow_link"/>
-        <child link="elbow_wrist_roll_link"/>
-        <origin xyz="0 0 .11865" rpy="0 1.57 0"/>
-        <axis xyz="0 1 0"/>
-        <limit lower="0" upper="1.0472" effort="1000.0" velocity="0.5"/>
-    </joint>
-    <joint name="wrist_roll" type="revolute">
-        <parent link="elbow_wrist_roll_link"/>
-        <child link="wrist_roll_wrist_pitch_link"/>
-        <origin xyz="0 0 .060028" rpy="0 0 1.57"/>
-        <axis xyz="0 0 1"/>
-        <limit lower="0" upper="3.14" effort="1000.0" velocity="0.5"/>
-    </joint>
-    <joint name="wrist_pitch" type="revolute">
-        <parent link="wrist_roll_wrist_pitch_link"/>
-        <child link="wrist_pitch_claw_link"/>
-        <origin xyz="0 0 .03017" rpy="0 -1.309 0"/>
-        <axis xyz="0 1 0"/>
-        <limit lower="0" upper="3.14" effort="1000.0" velocity="0.5"/>
-    </joint>
-    <joint name="claw" type="fixed">
-        <parent link="wrist_pitch_claw_link"/>
-        <child link="claw_end_link"/>
-        <origin xyz="0 0 .03017" rpy="0 0 0"/>
-        <!--        <axis xyz="1 0 0"/>-->
-        <!--        <limit lower="0" upper="3.14"/>-->
-    </joint>
-    <joint name="claw_left" type="fixed">
-        <parent link="wrist_pitch_claw_link"/>
-        <child link="claw_left_link"/>
-        <origin xyz="0 .015 0" rpy="0 0 0"/>
-    </joint>
     <joint name="claw_right" type="fixed">
         <parent link="wrist_pitch_claw_link"/>
         <child link="claw_right_link"/>

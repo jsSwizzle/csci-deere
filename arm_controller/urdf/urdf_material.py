@@ -1,6 +1,6 @@
 class URDFMaterial:
     name: str
-    rgba: list[float, float, float, float]
+    rgba: list[float]
 
     def __init__(self, mat, color):
         self.name = mat.attrib['name']

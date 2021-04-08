@@ -158,7 +158,6 @@
         <child link="base_waist_link"/>
         <origin xyz="0 0 .0560" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
-        <!--        <limit lower="-1.57" upper="1.57"/>-->
     </joint>
     <joint name="waist" type="revolute">
         <parent link="base_waist_link"/>
@@ -172,7 +171,6 @@
         <child link="elbow1_elbow2_link"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <axis xyz="0 1 0"/>
-        <!--        <limit lower="0.261799" upper="3.14" effort="1000.0" velocity="0.5"/>-->
         <limit lower="-2.87979" upper="2.87979" effort="1000.0" velocity="0.5"/>
     </joint>
     <joint name="elbow2" type="revolute">
@@ -180,7 +178,6 @@
         <child link="elbow2_elbow3_link"/>
         <origin xyz="0 0 .12" rpy="0 0 0"/>
         <axis xyz="0 1 0"/>
-        <!--        <limit lower="0.261799" upper="3.14" effort="1000.0" velocity="0.5"/>-->
         <limit lower="-2.87979" upper="2.87979" effort="1000.0" velocity="0.5"/>
     </joint>
     <joint name="elbow3" type="revolute">
@@ -188,7 +185,6 @@
         <child link="elbow3_elbow4_link"/>
         <origin xyz="0 0 .12" rpy="0 0 0"/>
         <axis xyz="1 0 0"/>
-        <!--        <limit lower="0.261799" upper="3.14" effort="1000.0" velocity="0.5"/>-->
         <limit lower="-2.87979" upper="2.87979" effort="1000.0" velocity="0.5"/>
     </joint>
     <joint name="elbow4" type="revolute">
@@ -196,7 +192,6 @@
         <child link="elbow4_elbow5_link"/>
         <origin xyz="0 0 .12" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
-        <!--        <limit lower="0.261799" upper="3.14" effort="1000.0" velocity="0.5"/>-->
         <limit lower="0" upper="2.87979" effort="1000.0" velocity="0.5"/>
     </joint>
     <joint name="elbow5" type="revolute">
