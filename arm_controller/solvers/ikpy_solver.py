@@ -68,3 +68,4 @@ class IKPySolver:
         Returns:
             coords {list} -- 2 dimensional list containing sets of (X, Y, Z) coordinates of each joint.
         """
+        pass

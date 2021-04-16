@@ -2,22 +2,17 @@
 """
 import enum
 import math
-import numpy
-
+import time
+import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
+from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d import Axes3D
+from multiprocessing import Process, Manager
 
 from arm_controller.arms.abstract_arm import AbstractArm
-from arm_controller.solvers.pykdl_solver import PyKDLSolver as Solver
+from arm_controller.solvers.pykdl_solver import PyKDLSolver
 from arm_controller.chains.py_chain import PyChain
 from arm_controller.chains.py_segment import PySegment
-
-def calculateDeltas(arr0: [], arr1: []):
-    ret = []
-    for i, (a0, a1) in enumerate(zip(arr0, arr1)):
-        ret.append(a1 - a0)
-    return ret
-
 
 class PlotterArm(AbstractArm):
     def __init__(self):
@@ -25,9 +20,9 @@ class PlotterArm(AbstractArm):
         """
         world_segment = PySegment('seg0', 'world', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56.0], None)
         waist_segment = PySegment('seg1', 'waist', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,42.93], 'Z', joint_no=0)
-        shoulder_segment = PySegment('seg2', 'shoulder', 30.0, 15.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,120.0], 'Y', joint_no=1)
-        elbow_segment = PySegment('seg3', 'elbow', 35.0, 0.0, 60.0, [0.0,0.0,0.0], [0.0,0.0,118.65], 'Y', joint_no=2)
-        wrist_roll_segment = PySegment('seg4', 'wrist_roll', 140.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,60.028], 'Z', joint_no=4)
+        shoulder_segment = PySegment('seg2', 'shoulder', 150.0, 15.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,120.0], 'Y', joint_no=1)
+        elbow_segment = PySegment('seg3', 'elbow', 10.0, 0.0, 60.0, [0.0,0.0,0.0], [0.0,0.0,118.65], 'Y', joint_no=2)
+        wrist_roll_segment = PySegment('seg4', 'wrist_roll', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,60.028], 'Z', joint_no=4)
         wrist_pitch_segment = PySegment('seg5', 'wrist_pitch', 80.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,30.17], 'Y', joint_no=5)
 
         self._chain = PyChain()
@@ -40,7 +35,19 @@ class PlotterArm(AbstractArm):
 
         self._servo_speed = 5.0
         self._solver = PyKDLSolver(self._chain)
-        self._ax = plt.axes(projection='3d')
+
+        # variables animation depends on
+        self.manager = Manager()
+        self.anim_variables = self.manager.dict()
+        self.anim_variables['exit'] = False # variable to tell animation to exit
+        self.anim_variables['start_angles'] = [] # starting angles of the current animation
+        self.anim_variables['end_angles'] = [] # ending angles of the current animation
+        self.anim_variables['is_running'] = True
+
+        self.set_default_position()
+
+        self.proc = Process(target=run_animation, args=(self.anim_variables, self._solver))
+        self.proc.start()
 
     def get_pos(self):
         """Calculates and returns current position of the arm.
@@ -86,12 +93,13 @@ class PlotterArm(AbstractArm):
         """
         current_angles = self._chain.get_current_values()
         angles = self._solver.inverse_solve(current_angles, [x_pos, y_pos, z_pos], [roll, pitch, yaw])
-        starting_coords = self._solver.segmented_forward_solve(current_angles)
-        i = 0
-        for segment in self._chain.segments:
+        for angle in angles:
             if segment.joint_no != -1:
-                self.set_joint(segment, angles[i], starting_coords)
-                i += 1
+                segment.current_val = angle
+
+        self.anim_variables['start_angles'] = current_angles
+        self.anim_variables['end_angles'] = angles
+        self.anim_variables['is_running'] = True
 
     def set_default_position(self):
         """Loads the default position for the robot arm.
@@ -100,85 +108,76 @@ class PlotterArm(AbstractArm):
         created during class initialization.
         """
         current_angles = self._chain.get_current_values()
-        starting_coords = self._solver.segmented_forward_solve(current_angles)
+        self.anim_variables['start_angles'] = current_angles
+
+        angles = []
         for segment in self._chain.segments:
             if segment.joint_no != -1:
-                self.set_joint(segment, segment.default_value, starting_coords)
+                default = segment.default_value
+                segment.current_val = default
+                angles.append(default)
 
-    def set_joint(self, segment, value, starting_coords):
+        self.anim_variables['end_angles'] = angles
+        self.anim_variables['is_running'] = True
+
+    def set_joint(self, segment, value):
         """Moves the specified segment to the given value.
 
         Arguments:
             segment {PySegment} -- segment to move.
             value {float} -- value to apply to joint.
         """
-        # TODO: figure out how the speed/rate can be implemented
+        current_angles = self._chain.get_current_values()
         segment.current_val = value
-        current_coords = self._solver.segmented_forward_solve(self._chain.get_current_values())
+        angles = self._chain.get_current_values()
 
-        self.create_lines([starting_coords, current_coords], self._ax)
-        plt.show()
+        self.anim_variables['start_angles'] = current_angles
+        self.anim_variables['end_angles'] = angles
+        self.anim_variables['is_running'] = True
 
-    def plot_3Dpts(self, xs: [], ys: [], zs: []):
-        ax = plt.axes(projection='3d')
-        lines = ax.plot3D(xs, ys, zs)
-        plt.setp(lines, color='r', linewidth=2.0, marker='+', mew=1.0, mec='b')
-        plt.grid(True)
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_zlabel('Z')
-        plt.show()
+def run_animation(anim_variables, solver):
+    """Runs an animation on the given plotter arm.
 
-    def create_lines(self, coords: [[[]]], ax):
-        lines = []
+    Arguments:
+        arm {PlotterArm} -- plotter arm to run animation on
+
+    """
+    # matplotlib objects
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_xlabel('X Position')
+    ax.set_ylabel('Y Position')
+    ax.set_zlabel('Z Position')
+    ax.set_title('3D Plot of Robot Arm')
+
+    # inner function called to animate
+    def animate(i):
+        angles = []
+        for a in range(len(anim_variables['start_angles'])):
+            start_angle, end_angle = anim_variables['start_angles'][a], anim_variables['end_angles'][a]
+            angle = start_angle + ((end_angle - start_angle) * (i / 499))
+            angles.append(angle)
+        coords = solver.segmented_forward_solve(angles)
+
+        xdata = []
+        ydata = []
+        zdata = []
+
         for c in coords:
-            xs = [item[0] for item in c]
-            ys = [item[1] for item in c]
-            zs = [item[2] for item in c]
-            # print(f'{xs}, {ys}, {zs}')
-            ln = ax.plot3D(xs, ys, zs)
-            plt.setp(ln, marker='+', mec='k', mew=.8)
-            lines.append(ln)
-        ax.set_xlim3d(-300, 300)
-        ax.set_ylim3d(-300, 300)
-        ax.set_zlim3d(0, 300)
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_zlabel('Z')
-        return lines
+            xdata.append(c[0])
+            ydata.append(c[1])
+            zdata.append(c[2])
 
-    def create_timelapse(self, coords1: [[]], coords2: [[]], ax, steps: int):
-        lines = []
-        x0s, x1s = [item[0] for item in coords1], [item[0] for item in coords2]
-        xds = calculateDeltas(x0s, x1s)
-        y0s, y1s = [item[1] for item in coords1], [item[1] for item in coords2]
-        yds = calculateDeltas(y0s, y1s)
-        z0s, z1s = [item[2] for item in coords1], [item[2] for item in coords2]
-        zds = calculateDeltas(z0s, z1s)
+        line = ax.plot(xdata, ydata, zdata, c="black", lw=2)
+        return line
 
-        currSteps = steps - 1
-        while currSteps > 0:
-            xs, ys, zs = [], [], []
-            for i, (x, d) in enumerate(zip(x1s, xds)):
-                xs.append(x - (d / steps * currSteps))
-            for i, (y, d) in enumerate(zip(y1s, yds)):
-                ys.append(y - (d / steps * currSteps))
-            for i, (z, d) in enumerate(zip(z1s, zds)):
-                zs.append(z - (d / steps * currSteps))
-            ln = ax.plot3D(xs, ys, zs)
-            plt.setp(ln, marker='.', mec='b', mew=1, alpha=1 - (currSteps / steps))
-            lines.append(ln)
-            currSteps -= 1
-        ln1 =ax.plot3D(x1s, y1s, z1s)
-        plt.setp(ln1, marker='x', mec='r', mew=.8)
-        lines.append(ln1)
-        ln0 = ax.plot3D(x0s, y0s, z0s)
-        plt.setp(ln0, marker='+', mec='k')
-        lines.append(ln0)
-        ax.set_xlim3d(-150, 150)
-        ax.set_ylim3d(-150, 150)
-        ax.set_zlim3d(0, 300)
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_zlabel('Z')
-        return lines
+    anim = FuncAnimation(fig, func=animate, frames=500, interval=10, repeat=False, blit=True)
+    anim_variables['is_running'] = False
+    plt.draw()
+    while not anim_variables['exit']:
+        if anim_variables['is_running']:
+            anim = FuncAnimation(fig, func=animate, frames=500, interval=10, repeat=False, blit=True)
+            anim_variables['is_running'] = False
+        plt.pause(0.5)
+    plt.close()
+    print('Exiting Animation Process')
