@@ -1,0 +1,235 @@
+<robot name="ArmAgeddon">
+    <material name="cyan1">
+        <color rgba="0 0.9 0.9 1.0"/>
+    </material>
+    <material name="cyan2">
+        <color rgba="0 0.6 0.6 1.0"/>
+    </material>
+    <material name="black">
+        <color rgba="0.1 0.1 0.1 1.0"/>
+    </material>
+    <material name="white">
+        <color rgba="0.9 0.9 0.9 1.0"/>
+    </material>
+    <material name="grey">
+        <color rgba="0.3 0.3 0.3 1.0"/>
+    </material>
+    <link name="world_base_link">
+        <visual>
+            <origin xyz="0 0 .028" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="0.056" radius="0.04"/>
+            </geometry>
+            <material name="cyan1"/>
+        </visual>
+    </link>
+    <link name="base_waist_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="0.01" radius="0.035"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+    <link name="waist_elbow1_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="1.571 0 0"/>
+            <geometry>
+                <cylinder length="0.02" radius="0.015"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+    <link name="elbow1_elbow2_link">
+
+        <visual>
+            <origin xyz="0 0 .06" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.030 0.015 0.120"/>
+            </geometry>
+            <material name="cyan2"/>
+        </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="0.02" radius="0.015"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+    <link name="elbow2_elbow3_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 1.571 0"/>
+            <geometry>
+                <cylinder length="0.02" radius="0.015"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <visual>
+            <origin xyz="0 0 .06" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.030 0.015 0.120"/>
+            </geometry>
+            <material name="cyan2"/>
+        </visual>
+    </link>
+    <link name="elbow3_elbow4_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="1.571 0 0"/>
+            <geometry>
+                <cylinder length="0.02" radius="0.015"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <visual>
+            <origin xyz="0 0 .06" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.030 0.015 0.120"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+    </link>
+    <link name="elbow4_elbow5_link">
+        <visual>
+            <origin xyz="0 0 .06" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.030 0.015 0.120"/>
+            </geometry>
+            <material name="cyan2"/>
+        </visual>
+    </link>
+    <link name="elbow5_wrist_roll_link">
+        <visual>
+            <origin xyz="0 0 .03" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.030 0.015 0.06"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+    </link>
+    <link name="wrist_roll_wrist_pitch_link">
+        <visual>
+            <origin xyz="0 0 .015" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.024 0.012 0.03"/>
+            </geometry>
+            <material name="cyan1"/>
+        </visual>
+    </link>
+    <link name="wrist_pitch_claw_link">
+        <visual>
+            <origin xyz="0 0 0.015" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.03 0.03 0.03"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+    <link name="claw_end_link">
+        <visual>
+            <origin xyz="0 0 .015" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.01 0.03 0.03"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+    </link>
+    <link name="claw_left_link">
+        <visual>
+            <origin xyz="0 .015 .03" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.02 0.02 0.06"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+    <link name="claw_right_link">
+        <visual>
+            <origin xyz="0 -.015 .03" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.02 0.02 0.06"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+    <joint name="base" type="fixed">
+        <parent link="world_base_link"/>
+        <child link="base_waist_link"/>
+        <origin xyz="0 0 .0560" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+    <joint name="waist" type="revolute">
+        <parent link="base_waist_link"/>
+        <child link="waist_elbow1_link"/>
+        <origin xyz="0 0 .04293" rpy="0 0 1.57"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-1.57" upper="1.57" effort="1000.0" velocity="0.5"/>
+    </joint>
+    <joint name="elbow1" type="revolute">
+        <parent link="waist_elbow1_link"/>
+        <child link="elbow1_elbow2_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="-2.87979" upper="2.87979" effort="1000.0" velocity="0.5"/>
+    </joint>
+    <joint name="elbow2" type="revolute">
+        <parent link="elbow1_elbow2_link"/>
+        <child link="elbow2_elbow3_link"/>
+        <origin xyz="0 0 .12" rpy="0 0 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="-2.87979" upper="2.87979" effort="1000.0" velocity="0.5"/>
+    </joint>
+    <joint name="elbow3" type="revolute">
+        <parent link="elbow2_elbow3_link"/>
+        <child link="elbow3_elbow4_link"/>
+        <origin xyz="0 0 .12" rpy="0 0 0"/>
+        <axis xyz="1 0 0"/>
+        <limit lower="-2.87979" upper="2.87979" effort="1000.0" velocity="0.5"/>
+    </joint>
+    <joint name="elbow4" type="revolute">
+        <parent link="elbow3_elbow4_link"/>
+        <child link="elbow4_elbow5_link"/>
+        <origin xyz="0 0 .12" rpy="0 0 0"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="0" upper="2.87979" effort="1000.0" velocity="0.5"/>
+    </joint>
+    <joint name="elbow5" type="revolute">
+        <parent link="elbow4_elbow5_link"/>
+        <child link="elbow5_wrist_roll_link"/>
+        <origin xyz="0 0 .11865" rpy="0 1.57 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="-2.87979" upper="2.87979" effort="1000.0" velocity="0.5"/>
+    </joint>
+    <joint name="wrist_roll" type="revolute">
+        <parent link="elbow5_wrist_roll_link"/>
+        <child link="wrist_roll_wrist_pitch_link"/>
+        <origin xyz="0 0 .060028" rpy="0 0 1.57"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="0" upper="3.14" effort="1000.0" velocity="0.5"/>
+    </joint>
+    <joint name="wrist_pitch" type="revolute">
+        <parent link="wrist_roll_wrist_pitch_link"/>
+        <child link="wrist_pitch_claw_link"/>
+        <origin xyz="0 0 .03017" rpy="0 -1.309 0"/>
+        <axis xyz="0 1 0"/>
+        <limit lower="0" upper="3.14" effort="1000.0" velocity="0.5"/>
+    </joint>
+    <joint name="claw" type="fixed">
+        <parent link="wrist_pitch_claw_link"/>
+        <child link="claw_end_link"/>
+        <origin xyz="0 0 .03017" rpy="0 0 0"/>
+        <!--        <axis xyz="1 0 0"/>-->
+        <!--        <limit lower="0" upper="3.14"/>-->
+    </joint>
+    <joint name="claw_left" type="fixed">
+        <parent link="wrist_pitch_claw_link"/>
+        <child link="claw_left_link"/>
+        <origin xyz="0 .015 0" rpy="0 0 0"/>
+    </joint>
+    <joint name="claw_right" type="fixed">
+        <parent link="wrist_pitch_claw_link"/>
+        <child link="claw_right_link"/>
+        <origin xyz="0 -.015 0" rpy="0 0 0"/>
+    </joint>
+</robot>

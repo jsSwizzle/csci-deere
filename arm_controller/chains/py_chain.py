@@ -1,12 +1,18 @@
 """Contains PyChain class to simulate PyKDL Chain with the use of PySegment's.
 """
 from arm_controller.chains.py_segment import PySegment
+from arm_controller.urdf.py_urdf import PyURDF, URDFObject
+
 
 class PyChain():
-    def __init__(self):
+    urdf: URDFObject = None
+
+    def __init__(self, urdf_file_path=None):
         """Basic constructor for PyChain class.
         """
         self.segments = []
+        if urdf_file_path is not None:
+            self.urdf = PyURDF.parse(urdf_file_path)
 
     def number_of_segments(self):
         """Returns the number of segments within the chain.

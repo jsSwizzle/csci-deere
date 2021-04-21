@@ -1,0 +1,38 @@
+<!--official documentation: http://wiki.ros.org/urdf/XML-->
+<!--use http://mymodelrobot.appspot.com for quick URDF visualization / diagnostics-->
+<robot name="example_robot">
+    <!--links are primarily used for visualization / collision, but are required between pairs of joints-->
+    <link name="link1"/>
+
+    <!--joints are where the kinematic data is stored, as well as relations to their attached links-->
+    <joint name="joint1_2" type="continuous">
+        <!--parent link generally is the link closer to root-->
+        <parent link="link1"/>
+        <!--child link generally is the link further from root-->
+        <child link="link2"/>
+        <!--origin defines the transform properties relative to the last joint
+        default xyz = 0 0 0
+        default rpy = 0 0 0-->
+        <origin xyz="5 3 0" rpy="0 0 0"/>
+        <!--axis defines the axis of rotation
+        these values behave better when vector is normalized-->
+        <axis xyz="-0.9 0.15 0"/>
+    </joint>
+    <link name="link2"/>
+
+    <joint name="joint2_3" type="continuous">
+        <parent link="link2"/>
+        <child link="link3"/>
+        <origin xyz="-2 5 0" rpy="0 0 1.57"/>
+        <axis xyz="-0.707 0.707 0"/>
+    </joint>
+    <link name="link3"/>
+
+    <joint name="joint3_4" type="continuous">
+        <parent link="link3"/>
+        <child link="link4"/>
+        <origin xyz="5 0 0" rpy="0 0 -1.57"/>
+        <axis xyz="0.707 -0.707 0"/>
+    </joint>
+    <link name="link4"/>
+</robot>
