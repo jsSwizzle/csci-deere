@@ -2,12 +2,12 @@
 """
 import enum
 import math
-import time
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 from multiprocessing import Process, Manager
+from time import sleep
 
 from arm_controller.arms.abstract_arm import AbstractArm
 from arm_controller.solvers.pykdl_solver import PyKDLSolver
@@ -33,21 +33,22 @@ class PlotterArm(AbstractArm):
         self._chain.append_segment(wrist_roll_segment)
         self._chain.append_segment(wrist_pitch_segment)
 
-        self._servo_speed = 5.0
+        self._servo_speed = 10.0
         self._solver = PyKDLSolver(self._chain)
 
         # variables animation depends on
         self.manager = Manager()
         self.anim_variables = self.manager.dict()
         self.anim_variables['exit'] = False # variable to tell animation to exit
-        self.anim_variables['start_angles'] = [] # starting angles of the current animation
-        self.anim_variables['end_angles'] = [] # ending angles of the current animation
-        self.anim_variables['is_running'] = True
 
-        self.set_default_position()
+        for segment in self._chain.segments:
+            if segment.joint_no != -1:
+                self.anim_variables[segment.id] = 0.0
 
         self.proc = Process(target=run_animation, args=(self.anim_variables, self._solver))
         self.proc.start()
+
+        self.set_default_position()
 
     def get_pos(self):
         """Calculates and returns current position of the arm.
@@ -74,7 +75,7 @@ class PlotterArm(AbstractArm):
         Returns:
             ss {float} -- Returns the new servo speed.
         """
-        if ss > 1.0 and ss < 10.0:
+        if ss > 1.0:
             self._servo_speed = ss
         return self._servo_speed
 
@@ -93,13 +94,11 @@ class PlotterArm(AbstractArm):
         """
         current_angles = self._chain.get_current_values()
         angles = self._solver.inverse_solve(current_angles, [x_pos, y_pos, z_pos], [roll, pitch, yaw])
-        for angle in angles:
+        i = 0
+        for segment in self._chain.segments:
             if segment.joint_no != -1:
-                segment.current_val = angle
-
-        self.anim_variables['start_angles'] = current_angles
-        self.anim_variables['end_angles'] = angles
-        self.anim_variables['is_running'] = True
+                self.set_joint(segment, angles[i])
+                i += 1
 
     def set_default_position(self):
         """Loads the default position for the robot arm.
@@ -107,18 +106,9 @@ class PlotterArm(AbstractArm):
         Sets each servo to its default position found in the servo_info dictionary
         created during class initialization.
         """
-        current_angles = self._chain.get_current_values()
-        self.anim_variables['start_angles'] = current_angles
-
-        angles = []
-        for segment in self._chain.segments:
+        for segment in self._chain.segments[::-1]:
             if segment.joint_no != -1:
-                default = segment.default_value
-                segment.current_val = default
-                angles.append(default)
-
-        self.anim_variables['end_angles'] = angles
-        self.anim_variables['is_running'] = True
+                self.set_joint(segment, segment.default_value)
 
     def set_joint(self, segment, value):
         """Moves the specified segment to the given value.
@@ -127,13 +117,26 @@ class PlotterArm(AbstractArm):
             segment {PySegment} -- segment to move.
             value {float} -- value to apply to joint.
         """
-        current_angles = self._chain.get_current_values()
-        segment.current_val = value
-        angles = self._chain.get_current_values()
+        target_value = value
+        current_value = segment.current_val
+        step = self._servo_speed / 2
 
-        self.anim_variables['start_angles'] = current_angles
-        self.anim_variables['end_angles'] = angles
-        self.anim_variables['is_running'] = True
+        if(current_value > target_value):
+            while((current_value - target_value) >= step):
+                current_value = current_value - step
+                self.anim_variables[segment.id] = current_value
+                sleep(0.5)
+            if((current_value - target_value) != 0.0):
+                self.anim_variables[segment.id] = target_value
+        elif(target_value > current_value):
+            while((target_value - current_value) >= step):
+                current_value = current_value + step
+                self.anim_variables[segment.id] = current_value
+                sleep(0.5)
+            if((target_value - current_value) != 0.0):
+                self.anim_variables[segment.id] = target_value
+
+        segment.current_val = value
 
 def run_animation(anim_variables, solver):
     """Runs an animation on the given plotter arm.
@@ -153,10 +156,10 @@ def run_animation(anim_variables, solver):
     # inner function called to animate
     def animate(i):
         angles = []
-        for a in range(len(anim_variables['start_angles'])):
-            start_angle, end_angle = anim_variables['start_angles'][a], anim_variables['end_angles'][a]
-            angle = start_angle + ((end_angle - start_angle) * (i / 499))
-            angles.append(angle)
+        for key in anim_variables.keys():
+            if key != 'exit':
+                angles.append(anim_variables[key])
+
         coords = solver.segmented_forward_solve(angles)
 
         xdata = []
@@ -171,13 +174,9 @@ def run_animation(anim_variables, solver):
         line = ax.plot(xdata, ydata, zdata, c="black", lw=2)
         return line
 
-    anim = FuncAnimation(fig, func=animate, frames=500, interval=10, repeat=False, blit=True)
-    anim_variables['is_running'] = False
+    anim = FuncAnimation(fig, func=animate, frames=300, interval=17, repeat=True, blit=True)
     plt.draw()
     while not anim_variables['exit']:
-        if anim_variables['is_running']:
-            anim = FuncAnimation(fig, func=animate, frames=500, interval=10, repeat=False, blit=True)
-            anim_variables['is_running'] = False
-        plt.pause(0.5)
+        plt.pause(0.01)
     plt.close()
     print('Exiting Animation Process')

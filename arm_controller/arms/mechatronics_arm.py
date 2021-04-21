@@ -139,20 +139,20 @@ class MechatronicsArm(AbstractArm):
         """
         target_value = value
         current_value = segment.current_val
-        step = self._servo_speed
+        step = self._servo_speed / 2
 
         if(current_value > target_value):
             while((current_value - target_value) >= step):
                 current_value = current_value - step
                 self._kit.servo[segment.joint_no].angle = current_value
-                sleep(1)
+                sleep(0.5)
             if((current_value - target_value) != 0.0):
                 self._kit.servo[segment.joint_no].angle = target_value
         elif(target_value > current_value):
             while((target_value - current_value) >= step):
                 current_value = current_value + step
                 self._kit.servo[segment.joint_no].angle = current_value
-                sleep(1)
+                sleep(0.5)
             if((target_value - current_value) != 0.0):
                 self._kit.servo[segment.joint_no].angle = target_value
 
