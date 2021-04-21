@@ -32,7 +32,8 @@ class URDFJoint:
         self.type = JointType(joint.attrib['type'])
         self.parent = parent.attrib['link']
         self.child = child.attrib['link']
-        self.origin_xyz: [] = origin.attrib['xyz'].split()
+        xyz = np.array(origin.attrib['xyz'].split())
+        self.origin_xyz: [] = xyz.astype(float)
         self.origin_rpy = origin.attrib['rpy'].split()
         if axis is not None:
             self.axis_xyz = axis.attrib['xyz'].split()

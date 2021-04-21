@@ -14,6 +14,9 @@
     <material name="grey">
         <color rgba="0.3 0.3 0.3 1.0"/>
     </material>
+    <material name="gravel">
+        <texture filename="gravel.tex"/>
+    </material>
     <link name="world_base_link">
         <visual>
             <origin xyz="0 0 .028" rpy="0 0 0"/>
@@ -42,7 +45,6 @@
         </visual>
     </link>
     <link name="elbow1_elbow2_link">
-
         <visual>
             <origin xyz="0 0 .06" rpy="0 0 0"/>
             <geometry>

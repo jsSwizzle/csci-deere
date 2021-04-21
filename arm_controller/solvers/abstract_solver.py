@@ -23,15 +23,21 @@ class AbstractSolver(ABC):
             angles {list[float]} -- list of angles for each rotating joint in the chain.
         """
     def forward_solve(self, angles, **kwargs):
-        """Finds the (x, y, z, roll, pitch, yaw) position of the end effector of the chain.
+        """
+        Finds the (x, y, z, roll, pitch, yaw) position of the end effector of the chain.
 
         Calculates the current (x, y, z, roll, pitch, yaw) position of the end
         effector of the arm using the given angles of each of the joints.
+        :param angles: list of current angles of each rotating joint in the chain.
+        :param kwargs:
+        :returns:
+            coords: list containing XYZ coordinates of the end effector.
+            rpy: list containing Roll, Pitch, and Yaw of the end effector.
 
         Args:
-            current_angles {list} -- list of current angles of each rotating joint in the chain.
+            current_angles {list} --
 
         Returns:
-            coords {list} -- list containing XYZ coordinates of the end effector.
-            rpy {list} -- list containing Roll, Pitch, and Yaw of the end effector.
+
         """
+

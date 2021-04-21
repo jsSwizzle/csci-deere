@@ -46,10 +46,11 @@ class IKPySolver(AbstractSolver):
         """
         return self._chain.forward_kinematics(angles)
 
-    def segmented_forward_solve(self, current_angles):
-        """Finds the (x, y, z) position of every joint in the chain (including the end effector).
-
-        Returns:
+    def segmented_forward_solve(self, angles):
+        """
+        Finds the (x, y, z) position of every joint in the chain (including the end effector).
+        :type angles: object
+        :return:
             coords {list} -- 2 dimensional list containing sets of (X, Y, Z) coordinates of each joint.
         """
         pass

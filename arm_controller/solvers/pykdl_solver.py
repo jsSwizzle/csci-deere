@@ -1,5 +1,7 @@
 """Implementation of Solver Class to solve Kinematics of Arm Class using PyKDL library.
 """
+import numpy as np
+
 from arm_controller.chains.py_chain import PyChain
 from arm_controller.chains.py_segment import PySegment
 from PyKDL import *
@@ -10,30 +12,33 @@ from arm_controller.solvers.abstract_solver import AbstractSolver
 
 class PyKDLSolver(AbstractSolver):
 
-    def __init__(self, chain):
+    def __init__(self, chain: PyChain):
         """Basic constructor for Solver class.
         """
         self._kdlChain = Chain()
         joint_mins = JntArray(chain.number_of_joints())
         joint_maxs = JntArray(chain.number_of_joints())
         i = 0
-        for segment in chain.segments:
-            rotation_frame = Frame(Rotation.EulerZYX(segment.rotation[0], segment.rotation[1], segment.rotation[2]))
-            vector_frame = Frame(Vector(segment.translation[0], segment.translation[1], segment.translation[2]))
+        # for segment in chain.segments:
+        for jnt in chain.urdf.joints:
+            rotation_frame = Frame(Rotation.EulerZYX(np.rad2deg(jnt.origin_rpy[0]),
+                                                     np.rad2deg(jnt.origin_rpy[1]),
+                                                     np.rad2deg(jnt.origin_rpy[2])))
+            vector_frame = Frame(Vector(jnt.origin_xyz[0], jnt.origin_xyz[1], jnt.origin_xyz[2]))
             frame = rotation_frame * vector_frame
             joint = None
-            if segment.joint_rot == None:
+            if jnt.axis_xyz == None:
                 joint = Joint()
-            elif segment.joint_rot == 'X':
+            elif jnt.axis_xyz[0] > 0:
                 joint = Joint(Joint.RotX)
-            elif segment.joint_rot == 'Y':
+            elif jnt.axis_xyz[1] > 0:
                 joint = Joint(Joint.RotY)
-            elif segment.joint_rot == 'Z':
+            elif jnt.axis_xyz[2] > 0:
                 joint = Joint(Joint.RotZ)
             self._kdlChain.addSegment(Segment(joint, frame))
-            if segment.joint_rot != None:
-                joint_mins[i] = math.radians(segment.min_value)
-                joint_maxs[i] = math.radians(segment.max_value)
+            if jnt.joint_rot != None:
+                joint_mins[i] = math.radians(jnt.limit_lower)
+                joint_maxs[i] = math.radians(jnt.limit_upper)
                 i += 1
 
         self._fkSolver = ChainFkSolverPos_recursive(self._kdlChain)

@@ -2,6 +2,9 @@
     <material name="cyan1">
         <color rgba="0 0.9 0.9 1.0"/>
     </material>
+    <material name="cyan1">
+        <color rgba="0 0.95 0.95 1.0"/>
+    </material>
     <material name="cyan2">
         <color rgba="0 0.4 0.4 1.0"/>
     </material>
@@ -30,7 +33,6 @@
         <child link="base_waist_link"/>
         <origin xyz="0 0 .0560" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
-        <!--        <limit lower="-1.57" upper="1.57"/>-->
     </joint>
     <link name="base_waist_link">
         <visual>
@@ -125,7 +127,7 @@
             </geometry>
             <material name="cyan1"/>
         </visual>
-                <visual>
+        <visual>
             <origin xyz="0 0 0.03" rpy="1.571 0 0"/>
             <geometry>
                 <cylinder length="0.015" radius="0.01"/>

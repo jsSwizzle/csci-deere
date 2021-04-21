@@ -2,13 +2,14 @@ from arm_controller.urdf.urdf_joint import URDFJoint
 from arm_controller.urdf.urdf_link import URDFLink
 from arm_controller.urdf.urdf_material import URDFMaterial
 
+
 class URDFObject:
     path: str
-    mats: list[URDFMaterial] = []
+    mats: dict[URDFMaterial] = {}
     links: list[URDFLink] = []
     joints: list[URDFJoint] = []
 
-    def __init__(self, path, mats, links, joints):
+    def __init__(self, path: str, mats: dict[URDFMaterial], links: list[URDFLink], joints: list[URDFJoint]):
         self.path = path
         self.mats = mats
         self.links = links
