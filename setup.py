@@ -22,5 +22,11 @@ setuptools.setup(
         "arm_controller.solvers",
         "arm_controller.test"
     ],
+    install_requires=[
+        "adafruit_servokit",
+        "matplotlib",
+        "numpy",
+        "ikpy"
+    ],
     python_requires=">=3.6"
 )

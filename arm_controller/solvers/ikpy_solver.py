@@ -52,14 +52,4 @@ class IKPySolver(AbstractSolver):
         Returns:
             coords {list} -- 2 dimensional list containing sets of (X, Y, Z) coordinates of each joint.
         """
-
-
-if __name__ == '__main__':
-    chain = PyChain('../urdf/mechatronics_arm.urdf')
-    solver = IKPySolver(chain)
-    ikSolv = solver.inverse_solve(target_coords=[.08, .14, .19], target_rpy=[0, 0, 0], orientation_mode='X')
-    fkSolv = solver.forward_solve(ikSolv)
-    ax = plt.figure().add_subplot(111, projection='3d')
-    solver._chain.plot(ikSolv, ax)
-    print(f'pos: {fkSolv[:3, 3]} | rpy {fkSolv[:3, :3]}')
-    plt.show()
+        pass
