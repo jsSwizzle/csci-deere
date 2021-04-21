@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 class IKPySolver(AbstractSolver):
 
     def __init__(self, chain: PyChain):
-        """Basic constructor for Solver class.
+        """Abstract Kinematic Solver class.
         """
         self._chain = ikpc.Chain(ikpc.URDF.get_urdf_parameters(chain.urdf.path,
                                                                [chain.urdf.links[0].name]))
@@ -25,6 +25,8 @@ class IKPySolver(AbstractSolver):
         :return: angles_list
         """
         ornt_mode = kwargs['orientation_mode']
+        if ornt_mode is None:
+            ornt_mode = 'X'
         return self._chain.inverse_kinematics(target_position=target_coords,
                                               target_orientation=target_rpy,
                                               orientation_mode=ornt_mode)
@@ -53,11 +55,11 @@ class IKPySolver(AbstractSolver):
 
 
 if __name__ == '__main__':
-    chain = PyChain('../urdf/arm.urdf')
+    chain = PyChain('../urdf/mechatronics_arm.urdf')
     solver = IKPySolver(chain)
-    ikSolv = solver.inverse_solve(target_coords=[.08, .14, .09], target_rpy=[180, 180, 180], orientation_mode='Z')
+    ikSolv = solver.inverse_solve(target_coords=[.08, .14, .19], target_rpy=[0, 0, 0], orientation_mode='X')
     fkSolv = solver.forward_solve(ikSolv)
     ax = plt.figure().add_subplot(111, projection='3d')
     solver._chain.plot(ikSolv, ax)
-    solver._chain.plot(solver._chain.inverse_kinematics_frame(fkSolv), ax)
+    print(f'pos: {fkSolv[:3, 3]} | rpy {fkSolv[:3, :3]}')
     plt.show()

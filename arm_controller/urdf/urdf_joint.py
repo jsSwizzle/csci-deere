@@ -5,6 +5,9 @@ from enum import Enum
 
 
 class JointType(Enum):
+    """
+    Joint Rotation Type
+    """
     REVOLUTE = 'revolute'
     CONTINUOUS = 'continuous'
     PRISMATIC = 'prismatic'
@@ -15,7 +18,7 @@ class JointType(Enum):
 
 class URDFJoint:
     """
-    Our representation of URDF Joints for URDF-Compliant Solvers
+    Our representation of URDF Joints
     """
     name: str
     type: JointType

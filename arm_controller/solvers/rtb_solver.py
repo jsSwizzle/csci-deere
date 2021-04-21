@@ -17,10 +17,13 @@ from arm_controller.urdf.urdf_joint import URDFJoint
 class RTBSolver(AbstractSolver):
 
     def __init__(self, chain: PyChain):
-        """Basic constructor for Solver class.
+        """Abstract Kinematic Solver class.
+
+        Location for URDF files are relative to:
+        /venv/Lib/site-packages/rtbdata/xacro
         """
         links, name = rtb.ERobot.urdf_to_ets_args(self,
-                                                  'arm.urdf')
+                                                  'mechatronics_arm.urdf')
         self._robot = rtb.ERobot(links)
         self._robot.name = name
 
@@ -41,12 +44,9 @@ class RTBSolver(AbstractSolver):
         initial_angles = np.array(kwargs['initial_angles'])
         end_link = kwargs['end_link']
         pose = self._robot.fkine(initial_angles, end_link)
-        ik1 = self._robot.ikine_min(rtb.ETS.SE3(t=target_coords, rpy=target_rpy),
-                                    q0=initial_angles)
+        ik1 = self._robot.ikine_min(pose, q0=initial_angles)
         move = rtb.jtraj(self._robot.q, ik1.q, 50)
-        self._robot.plot(move.y, backend='pyplot')
-        # robot.plot(ik1.q, backend='pyplot')
-        return self._chain.inverse_kinematics(target_coords, target_rpy)
+        return self._robot.plot(move.y, backend='pyplot')
 
     def forward_solve(self, angles, **kwargs):
         """Finds the (x, y, z, roll, pitch, yaw) position of the end effector of the chain.
@@ -60,8 +60,9 @@ class RTBSolver(AbstractSolver):
         Returns:
             coords {list} -- list containing XYZ coordinates of the end effector.
             rpy {list} -- list containing Roll, Pitch, and Yaw of the end effector.
+            :param angles:
             :param **kwargs:
-            :keyword
+            :keyword end_link: name of end link of chain for calculation
         """
         end_link = kwargs['end_link']
         return self._robot.fkine(angles, end_link)

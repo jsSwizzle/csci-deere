@@ -5,7 +5,7 @@ from arm_controller.chains.py_chain import PyChain
 
 class AbstractSolver(ABC):
     def __init__(self, chain: PyChain):
-        """Basic constructor for Solver class.
+        """Abstract Kinematic Solver class.
         """
 
     def inverse_solve(self, target_coords=[0, 0, 0], target_rpy=[0, 0, 0], **kwargs) -> list[float]:
