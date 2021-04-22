@@ -19,7 +19,7 @@ class RTBSolver(AbstractSolver):
         """Abstract Kinematic Solver class.
 
         Location for URDF files are relative to:
-        /venv/Lib/site-packages/rtbdata/xacro
+        /Lib/site-packages/rtbdata/xacro
         """
         self.chain = chain
         links, name = rtb.ERobot.urdf_to_ets_args(self,
@@ -76,18 +76,20 @@ class RTBSolver(AbstractSolver):
             coords {list} -- 2 dimensional list containing sets of (X, Y, Z) coordinates of each joint.
         """
         tuples = []
-        for joint in self.chain.urdf.joints:
-            self.forward_solve()
+        for link in self.chain.urdf.links:
+            tuples.append(self.forward_solve(angles=angles, end_link=link.name))
+        return tuples
 
 
 def main():
-    solver = RTBSolver(None)
+    solver = RTBSolver(PyChain(urdf_file_path='../../venv/Lib/site-packages/rtbdata/xacro/mechatronics_arm.urdf'))
     fk = solver.forward_solve(solver._robot.q, end_link='claw_end_link')
     solve = solver.inverse_solve(target_coords=[.08, .08, .09],
                                  target_rpy=[0, 90, 0],
                                  initial_angles=solver._robot.q,
                                  end_link='claw_end_link')
-    print(fk)
+    sfk = solver.segmented_forward_solve(solve)
+    print(sfk)
 
 
 if __name__ == '__main__':

@@ -71,4 +71,4 @@ if __name__ == '__main__':
                                orientation_mode='Y')
     sfs = solver.segmented_forward_solve(inv)
     fs = solver.forward_solve(inv)
-    print('done')
+    print(fs)
