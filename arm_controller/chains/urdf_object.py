@@ -1,17 +1,10 @@
 from enum import Enum
 from xml.etree.ElementTree import Element
-
 import numpy as np
 
 
-
-
 class URDFMaterial:
-    name: str
-    rgba: list[float]
-    texture: str
-
-    def __init__(self, mat: Element, color: Element = None, tex: Element = None):
+    def __init__(self, mat, color, tex):
         self.name = mat.attrib['name']
         if color is not None:
             self.rgba = np.array(color.attrib['rgba'].split()).astype(float)
@@ -34,14 +27,8 @@ class URDFJoint:
     """
     Our representation of URDF Joints
     """
-    name: str
-    type: JointType
-    parent: str
-    child: str
-    origin_xyz: list[float]
-    origin_rpy: list[float]
 
-    def __init__(self, joint: Element, parent: Element, child: Element, origin: Element, axis: Element, limit: Element):
+    def __init__(self, joint, parent, child, origin, axis, limit):
         self.name = joint.attrib['name']
         self.type = JointType(joint.attrib['type'])
         self.parent = parent.attrib['link']
@@ -66,13 +53,7 @@ class GeometryType(Enum):
     MESH = 'mesh'
 
 class URDFVisual:
-    origin_xyz: list[float] = [0, 0, 0]
-    origin_rpy: list[float] = [0, 0, 0]
-    geometry_type: GeometryType
-    geo_attrib: dict[str, str]
-    mat_name: str
-
-    def __init__(self, origin: Element, geometry: Element, material: Element):
+    def __init__(self, origin, geometry, material):
         self.origin_xyz = np.array(origin.attrib['xyz'].split()).astype(float)
         self.origin_rpy = np.array(origin.attrib['rpy'].split()).astype(float)
         self.geometry_type = GeometryType(geometry[0].tag)
@@ -83,12 +64,7 @@ class URDFVisual:
 
 
 class URDFCollision:
-    origin_xyz: list[float] = [0, 0, 0]
-    origin_rpy: list[float] = [0, 0, 0]
-    geometry_type: GeometryType
-    geometry_attrib: dict[str, str]
-
-    def __init__(self, origin: Element, geometry: Element):
+    def __init__(self, origin, geometry):
         self.origin_xyz = np.array(origin.attrib['xyz'].split()).astype(float)
         self.origin_rpy = np.array(origin.attrib['rpy'].split()).astype(float)
         self.geometry_type = GeometryType(geometry[0].tag)
@@ -98,11 +74,7 @@ class URDFCollision:
 
 
 class URDFLink:
-    name: str
-    visuals: list[URDFVisual] = []
-    collisions: list[URDFCollision] = []
-
-    def __init__(self, link: Element, visuals: list[Element], collisions: list[Element]):
+    def __init__(self, link, visuals, collisions):
         self.name = link.attrib['name']
         self.visuals = []
         for viz in visuals:
@@ -125,14 +97,8 @@ class URDFLink:
 
 
 class URDFObject:
-    path: str
-    mats: dict[URDFMaterial] = {}
-    links: list[URDFLink] = []
-    joints: list[URDFJoint] = []
-
-    def __init__(self, path: str, mats: dict[URDFMaterial], links: list[URDFLink], joints: list[URDFJoint]):
+    def __init__(self, path, mats, links, joints):
         self.path = path
         self.mats = mats
         self.links = links
         self.joints = joints
-

@@ -4,9 +4,6 @@ from arm_controller.chains.py_urdf import PyURDF, URDFObject
 
 
 class PyChain():
-    urdf: URDFObject = None
-    current_values: list[float]
-
     def __init__(self, urdf_file_path=None):
         """Basic constructor for PyChain class.
         """
