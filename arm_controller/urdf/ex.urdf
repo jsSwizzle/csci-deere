@@ -1,51 +1,69 @@
 <!--official documentation: http://wiki.ros.org/urdf/XML-->
 
-<!--use http://mymodelrobot.appspot.com for quick URDF visualization / diagnostics-->
+<!--use http://mymodelrobot.appspot.com for quick, portable URDF visualization / diagnostics-->
 
 <robot name="example_robot">
-    <!--materials can be defined at the root level, or in visual elements in the tree, -->
+    <!--materials can be defined at the root level, or in visual elements in the tree -->
+    <!--    definition types and their attributes are as follows:
+        color - rgba: [r,g,b,a]
+        texture - filename: str
+        -->
     <material name="cyan1">
         <color rgba="0 0.9 0.9 1.0"/>
+    </material>
+    <material name="grey">
+        <color rgba="0.3 0.3 0.3 1.0"/>
     </material>
     <!--    links are primarily used for visualization / collision, but are required between pairs of joints-->
     <!--    in most cases, there is a base link and subsequent joint representing an initial point in world space before
         the chain of joints proper-->
     <link name="link0">
         <visual>
-            <origin xyz=".5 0 0" rpy="0 0 0"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <box size="1 0.1 0.1"/>
+                <!--    geometry types and their attributes are as follows
+                    box - size: [x,y,z]
+                    cylinder - radius: float, length: float
+                    sphere - radius: float
+                    mesh - filename: str, scale: float
+                    -->
+                <box size="0.3 0.3 0.3"/>
             </geometry>
-            <material name="cyan1"/>
+            <material name="grey"/>
         </visual>
     </link>
     <joint name="joint0_1" type="fixed">
         <parent link="link0"/>
         <child link="link1"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
+        <!--    a notable quirk with some solvers is the need to override the default axis (1 0 0) to a Z axis in the root
+            joint to comply with plotting in robotics coordinates standards-->
+        <axis xyz="0 0 1"/>
     </joint>
+
+
     <link name="link1">
         <visual>
             <!--    visual and collision origin defines the transform properties relative to the parent joint
                 AKA the joint with this link named as its child link
                 default xyz = 0 0 0
-                default rpy = 0 0 0-->
+                default rpy = 0 0 0
+                -->
+            <!--note that the origin point of all geometry types are their center, so for visualizing appendages origins
+            usually have to be offset by half the origin displacement (for single axis displacement) of its following
+            joint to be placed properly. -->
             <origin xyz="0 0 .5" rpy="0 0 0"/>
-            <!--    geometry types and their attributes are as follows
-                box - size: list[x,y,z]
-                cylinder - radius: float, length: float
-                sphere - radius: float
-                mesh - filename: str, scale: float
-            -->
+
+            <!--also related to appendages, setting a cylinders length to the length of displacement, or a box's given
+            size dimension the that same dimension's displacement ensures contiguous visuals for a robot-->
             <geometry>
-                <box size="0.1 0.2 1"/>
+                <cylinder length="1" radius=".1"/>
             </geometry>
             <!--    a material is required for a visual, but it can be named the same as a material defined elsewhere,
                 as is the case here-->
             <material name="cyan1"/>
         </visual>
     </link>
-
     <!--    joints are where the kinematic data is stored, as well as relations to their attached links-->
     <!--    their rotation type is stored as an attribute, types of joints are as follows:
         revolute - a hinge joint that rotates along the axis and has a limited range specified by the upper and lower limits.
@@ -65,13 +83,27 @@
             default xyz = 0 0 0
             default rpy = 0 0 0-->
         <origin xyz="0 0 1" rpy="0 0 0"/>
-        <!--axis defines the axis of rotation
-            these values behave better when vector is normalized
+        <!--axis defines the axis of rotation. these values behave better when vector is normalized
             default xyz = 1 0 0 -->
         <axis xyz="-0.9 0.15 0"/>
+        <!--    if a joint is not fixed, URDF as a format requires limits on effort and velocity, but for many solvers,
+            these are not explicitly required, so our parser does not require them for instantiation of joints -->
+        <!--assumed default effort (taken from documentation examples): 1000
+            velocity values for different joints:
+            revolute: radians/sec
+            prismatic: meters/sec
+            -->
+        <limit effort="1000.0" velocity="0.5"/>
     </joint>
 
     <link name="link2">
+        <!--    note that when visualizing the next joint, its displacement is along two axes, so the visuals compensate
+            by the first displacing itself halfway along one axis, then the second displacing itself the entirety of
+            the first axis's displacement, and then halfway along the second. this can be done in any order and can even
+            extrapolate to a third displacement by following similar steps, with displacement fully along two axes, and
+            halfway down the third.
+            sizing rules for contiguity apply, but only with the current size dimension needing to equate to the dimension
+            being 'spanned'-->
         <visual>
             <origin xyz="-.25 0 0" rpy="0 0 0"/>
             <geometry>
@@ -100,7 +132,7 @@
             <geometry>
                 <box size="1 .1 0.1"/>
             </geometry>
-            <material name="cyan1"/>
+            <material name="grey"/>
         </visual>
     </link>
     <joint name="joint3_4" type="continuous">

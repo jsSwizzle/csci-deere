@@ -2,7 +2,6 @@
 """
 import xml.etree.ElementTree as ET
 
-
 from arm_controller.chains.urdf_object import URDFObject, URDFMaterial, URDFCollision, URDFVisual, URDFLink, URDFJoint
 
 
@@ -11,16 +10,19 @@ class PyURDF:
     def parse(filepath) -> URDFObject:
         """
         Parses a URDF file into a URDFObject, a pythonic representation of URDF
-        :return:
+
+        Returns:
+            urdf (URDFObject): URDF Object created from file
         """
         tree = ET.parse(source=filepath)
         root = tree.getroot()
         s = ''
+        name = root.attrib['name']
         links = []
         joints = []
         materials = {}
         # This gathers all instances of materials and adds them to a dictionary, assuring that all materials are defined
-        # and referenceable by name even if they are defined within links
+        # and referencable by name even if they are defined within links
         mat_iter = root.iter('material')
         all_mats = [m for m in mat_iter]
         for mat in all_mats:
@@ -52,4 +54,9 @@ class PyURDF:
                                 item.find('limit'))
                 joints.append(jnt)
 
-        return URDFObject(filepath, materials, links, joints)
+        return URDFObject(name, filepath, materials, links, joints)
+
+
+if __name__ == '__main__':
+    urdf = PyURDF.parse('../urdf/mechatronics_arm.urdf')
+    print(urdf)

@@ -60,12 +60,11 @@ class PyKDLSolver(AbstractSolver):
         effector (x_pos, y_pos, z_pos, roll, pitch, yaw) in cartesion space.
 
         Args:
-            initial_angles {list} -- initial angle position for each rotating joint in the chain.
-            target_coords {list} -- target end effector XYZ coordinates.
-            target_rpy {list} -- target end effector Roll, Pitch, and Yaw.
-
+            target_coords (list[float]): target end effector XYZ coordinates.
+            target_rpy (list[float]): target end effector Roll, Pitch, and Yaw.
+            **kwargs:
         Returns:
-            angles {list} -- list of angles for each rotating joint in the chain.
+            angles (list[float]): list of angles for each rotating joint in the chain.
         """
         initial_angles = kwargs['initial_angles']
         ikJointFinal = JntArray(self._kdlChain.getNrOfJoints())
@@ -92,11 +91,12 @@ class PyKDLSolver(AbstractSolver):
         effector of the arm using the given angles of each of the joints.
 
         Args:
-            current_angles {list} -- list of current angles of each rotating joint in the chain.
+            angles (list): list of current angles of each rotating joint in the chain.
+            **kwargs:
 
         Returns:
-            coords {list} -- list containing XYZ coordinates of the end effector.
-            rpy {list} -- list containing Roll, Pitch, and Yaw of the end effector.
+            coords (list): list containing XYZ coordinates of the end effector.
+            rpy (list): list containing Roll, Pitch, and Yaw of the end effector.
         """
         fkJointInitial = JntArray(self._kdlChain.getNrOfJoints())
 

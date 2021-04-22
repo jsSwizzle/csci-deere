@@ -4,7 +4,7 @@ from arm_controller.chains.py_urdf import PyURDF, URDFObject
 
 
 class PyChain():
-    def __init__(self, urdf_file_path=None):
+    def __init__(self, urdf_file_path):
         """Basic constructor for PyChain class.
         """
         self.segments = []
