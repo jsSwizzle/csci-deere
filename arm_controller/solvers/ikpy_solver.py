@@ -11,14 +11,14 @@ import matplotlib.pyplot as plt
 
 class IKPySolver(AbstractSolver):
 
-    def __init__(self, chain: PyChain):
+    def __init__(self, chain):
         """Abstract Kinematic Solver class.
         """
         self.chain = chain
         self._chain = ikpc.Chain(ikpc.URDF.get_urdf_parameters(chain.urdf.path,
                                                                [chain.urdf.links[0].name]))
 
-    def inverse_solve(self, target_coords=[0, 0, 0], target_rpy=[0, 0, 0], **kwargs) -> list[float]:
+    def inverse_solve(self, target_coords, target_rpy, **kwargs):
         """
         :param target_coords:
         :param target_rpy:
@@ -61,14 +61,3 @@ class IKPySolver(AbstractSolver):
             coords.append(matrix4x4_to_xyz_rpy(mtx)[0])
         return coords
         pass
-
-
-if __name__ == '__main__':
-    chain = PyChain(urdf_file_path="../urdf/mechatronics_arm.urdf")
-    solver = IKPySolver(chain=chain)
-    inv = solver.inverse_solve(target_coords=[.08, .08, .09],
-                               target_rpy=[0, 90, 0],
-                               orientation_mode='Y')
-    sfs = solver.segmented_forward_solve(inv)
-    fs = solver.forward_solve(inv)
-    print(fs)

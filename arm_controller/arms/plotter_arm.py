@@ -1,5 +1,6 @@
 """Plotter class that can be used as a visual representation of a chain/arm.
 """
+import os
 import enum
 import math
 import numpy as np
@@ -10,7 +11,7 @@ from multiprocessing import Process, Manager
 from time import sleep
 
 from arm_controller.arms.abstract_arm import AbstractArm
-from arm_controller.solvers.pykdl_solver import PyKDLSolver
+from arm_controller.solvers.ikpy_solver import IKPySolver
 from arm_controller.chains.py_chain import PyChain
 from arm_controller.chains.py_segment import PySegment
 
@@ -18,23 +19,14 @@ class PlotterArm(AbstractArm):
     def __init__(self):
         """Constructs Plotter class.
         """
-        world_segment = PySegment('seg0', 'world', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56.0], None)
-        waist_segment = PySegment('seg1', 'waist', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,42.93], 'Z', joint_no=0)
-        shoulder_segment = PySegment('seg2', 'shoulder', 150.0, 15.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,120.0], 'Y', joint_no=1)
-        elbow_segment = PySegment('seg3', 'elbow', 10.0, 0.0, 60.0, [0.0,0.0,0.0], [0.0,0.0,118.65], 'Y', joint_no=2)
-        wrist_roll_segment = PySegment('seg4', 'wrist_roll', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,60.028], 'Z', joint_no=4)
-        wrist_pitch_segment = PySegment('seg5', 'wrist_pitch', 80.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,30.17], 'Y', joint_no=5)
-
-        self._chain = PyChain()
-        self._chain.append_segment(world_segment)
-        self._chain.append_segment(waist_segment)
-        self._chain.append_segment(shoulder_segment)
-        self._chain.append_segment(elbow_segment)
-        self._chain.append_segment(wrist_roll_segment)
-        self._chain.append_segment(wrist_pitch_segment)
+        
+        dirname = os.path.dirname(__file__)
+        filepath = os.path.join(dirname, '../urdf/mechatronics_arm.urdf')
+        print(f'{filepath}')
+        self._chain = PyChain(urdf_file_path=filepath)
 
         self._servo_speed = 10.0
-        self._solver = PyKDLSolver(self._chain)
+        self._solver = IKPySolver(self._chain)
 
         # variables animation depends on
         self.manager = Manager()

@@ -22,11 +22,11 @@ def xyz_rpy_to_matrix4x4(xyz, rpy):
 
 class AbstractSolver(ABC):
     chain: PyChain
-    def __init__(self, chain: PyChain):
+    def __init__(self, chain):
         """Abstract Kinematic Solver class.
         """
 
-    def inverse_solve(self, target_coords=[0, 0, 0], target_rpy=[0, 0, 0], **kwargs) -> list[float]:
+    def inverse_solve(self, target_coords, target_rpy, **kwargs):
         """Finds the angles for each joint of the arm given a target end effector.
 
         Calculates the angles each joint needs to be at given the target end
@@ -54,8 +54,9 @@ class AbstractSolver(ABC):
             rpy: list containing Roll, Pitch, and Yaw of the end effector.
 
         Args:
-            current_angles {list} --
+            current_angles {list} -- list of current angles of each rotating joint in the chain.
 
         Returns:
-
+            coords {list} -- list containg XYZ coordinates of the end effector.
+            rpy {list} -- list containing Roll, Pitch, and Yaw of the end effector.
         """

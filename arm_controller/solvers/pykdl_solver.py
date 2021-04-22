@@ -13,7 +13,7 @@ from arm_controller.solvers.abstract_solver import AbstractSolver
 
 class PyKDLSolver(AbstractSolver):
 
-    def __init__(self, chain: PyChain):
+    def __init__(self, chain):
         """Basic constructor for Solver class.
         """
         self.chain = chain
@@ -29,13 +29,13 @@ class PyKDLSolver(AbstractSolver):
             vector_frame = Frame(Vector(jnt.origin_xyz[0], jnt.origin_xyz[1], jnt.origin_xyz[2]))
             frame = rotation_frame * vector_frame
             joint = None
-            if jnt.type == JointType.FIXED | jnt.axis_xyz is None:
+            if jnt.type == JointType.FIXED or jnt.axis_xyz is None:
                 joint = Joint()
-            elif jnt.axis_xyz[0] == 1 | jnt.axis_xyz[0] == -1:
+            elif jnt.axis_xyz[0] == 1 or jnt.axis_xyz[0] == -1:
                 joint = Joint(Joint.RotX)
-            elif jnt.axis_xyz[1] == 1 | jnt.axis_xyz[1] == -1:
+            elif jnt.axis_xyz[1] == 1 or jnt.axis_xyz[1] == -1:
                 joint = Joint(Joint.RotY)
-            elif jnt.axis_xyz[2] == 1 | jnt.axis_xyz[2] == -1:
+            elif jnt.axis_xyz[2] == 1 or jnt.axis_xyz[2] == -1:
                 joint = Joint(Joint.RotZ)
             self._kdlChain.addSegment(Segment(joint, frame))
             if jnt.limit_lower is not None:
@@ -53,7 +53,7 @@ class PyKDLSolver(AbstractSolver):
                                                 self._ikSolverVel,
                                                 10_000)
 
-    def inverse_solve(self, target_coords=[0, 0, 0], target_rpy=[0, 0, 0], **kwargs) -> list[float]:
+    def inverse_solve(self, target_coords, target_rpy, **kwargs):
         """Finds the angles for each joint of the arm given a target end effector.
 
         Calculates the angles each joint needs to be at given the target end

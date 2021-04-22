@@ -27,7 +27,7 @@ class RTBSolver(AbstractSolver):
         self._robot = rtb.ERobot(links)
         self._robot.name = name
 
-    def inverse_solve(self, target_coords=[0, 0, 0], target_rpy=[0, 0, 0], **kwargs) -> list[float]:
+    def inverse_solve(self, target_coords, target_rpy, **kwargs):
         """Finds the angles for each joint of the arm given a target end effector.
 
         Calculates the angles each joint needs to be at given the target end
@@ -79,18 +79,3 @@ class RTBSolver(AbstractSolver):
         for link in self.chain.urdf.links:
             tuples.append(self.forward_solve(angles=angles, end_link=link.name))
         return tuples
-
-
-def main():
-    solver = RTBSolver(PyChain(urdf_file_path='../../venv/Lib/site-packages/rtbdata/xacro/mechatronics_arm.urdf'))
-    fk = solver.forward_solve(solver._robot.q, end_link='claw_end_link')
-    solve = solver.inverse_solve(target_coords=[.08, .08, .09],
-                                 target_rpy=[0, 90, 0],
-                                 initial_angles=solver._robot.q,
-                                 end_link='claw_end_link')
-    sfk = solver.segmented_forward_solve(solve)
-    print(sfk)
-
-
-if __name__ == '__main__':
-    main()

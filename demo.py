@@ -13,8 +13,6 @@ def mainProgram():
             print("Exiting Plotter Control")
             arm.anim_variables['exit'] = True
             break
-        elif user_input == 'redraw':
-            arm.anim_variables['is_running'] = True
         else:
             print('Unknown Command')
 

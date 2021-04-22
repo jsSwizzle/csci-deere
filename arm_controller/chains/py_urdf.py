@@ -16,9 +16,9 @@ class PyURDF:
         tree = ET.parse(source=filepath)
         root = tree.getroot()
         s = ''
-        links: list[URDFLink] = []
-        joints: list[URDFJoint] = []
-        materials: dict[URDFMaterial] = {}
+        links = []
+        joints = []
+        materials = {}
         # This gathers all instances of materials and adds them to a dictionary, assuring that all materials are defined
         # and referenceable by name even if they are defined within links
         mat_iter = root.iter('material')
@@ -53,8 +53,3 @@ class PyURDF:
                 joints.append(jnt)
 
         return URDFObject(filepath, materials, links, joints)
-
-
-if __name__ == '__main__':
-    # urdf = PyURDF.parse('mechatronics_arm.urdf')
-    urdf = PyURDF.parse('../urdf/armageddon.urdf')
