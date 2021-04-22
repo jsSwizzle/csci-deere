@@ -50,7 +50,6 @@ class AbstractSolver(ABC):
         Args:
             angles (list): list of current angles of each rotating joint in the chain.
             **kwargs:
-                end_link: name of end effector to calculate
         Returns:
             coords (list): list containing XYZ coordinates of the end effector.
             rpy (list): list containing Roll, Pitch, and Yaw of the end effector.

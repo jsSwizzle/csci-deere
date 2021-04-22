@@ -49,10 +49,14 @@ class URDFJoint:
         else:
             self.axis_xyz = None
         if limit is not None:
-            self.limit_lower = float(limit.attrib['lower'])
-            self.limit_upper = float(limit.attrib['upper'])
-            self.limit_velocity = float(limit.attrib['velocity'])
-            self.limit_effort = float(limit.attrib['effort'])
+            if limit.attrib['lower'] is not None:
+                self.limit_lower = float(limit.attrib['lower'])
+            if limit.attrib['upper'] is not None:
+                self.limit_upper = float(limit.attrib['upper'])
+            if limit.attrib['velocity'] is not None:
+                self.limit_velocity = float(limit.attrib['velocity'])
+            if limit.attrib['effort'] is not None:
+                self.limit_effort = float(limit.attrib['effort'])
         else:
             self.limit_lower = None
             self.limit_upper = None

@@ -58,5 +58,6 @@ class PyURDF:
 
 
 if __name__ == '__main__':
-    urdf = PyURDF.parse('../urdf/mechatronics_arm.urdf')
+    # urdf = PyURDF.parse('../urdf/mechatronics_arm.urdf')
+    urdf = PyURDF.parse('../urdf/ex.urdf')
     print(urdf)
