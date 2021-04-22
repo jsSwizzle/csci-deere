@@ -68,3 +68,8 @@ class IKPySolver(AbstractSolver):
             coords.append(matrix4x4_to_xyz_rpy(mtx)[0])
         return coords
         pass
+
+if __name__ == '__main__':
+    chain = PyChain(urdf_file_path='../urdf/ex.urdf')
+    solver = IKPySolver(chain)
+    print(solver)

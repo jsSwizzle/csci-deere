@@ -5,8 +5,8 @@
 <robot name="example_robot">
     <!--materials can be defined at the root level, or in visual elements in the tree -->
     <!--    definition types and their attributes are as follows:
-        color - rgba: [r,g,b,a]
-        texture - filename: str
+                color - rgba: [r,g,b,a]
+                texture - filename: str
         -->
     <material name="cyan1">
         <color rgba="0 0.9 0.9 1.0"/>
@@ -22,17 +22,17 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
                 <!--    geometry types and their attributes are as follows
-                    box - size: [x,y,z]
-                    cylinder - radius: float, length: float
-                    sphere - radius: float
-                    mesh - filename: str, scale: float
+                            box - size: [x,y,z]
+                            cylinder - radius: float, length: float
+                            sphere - radius: float
+                            mesh - filename: str, scale: float
                     -->
                 <box size="0.3 0.3 0.3"/>
             </geometry>
             <material name="grey"/>
         </visual>
     </link>
-    <joint name="joint0_1" type="fixed">
+    <joint name="joint0_1" type="continuous">
         <parent link="link0"/>
         <child link="link1"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -64,46 +64,51 @@
             <material name="cyan1"/>
         </visual>
     </link>
-    <!--    joints are where the kinematic data is stored, as well as relations to their attached links-->
-    <!--    their rotation type is stored as an attribute, types of joints are as follows:
-        revolute - a hinge joint that rotates along the axis and has a limited range specified by the upper and lower limits.
-        continuous - a continuous hinge joint that rotates around the axis and has no upper and lower limits.
-        prismatic - a sliding joint that slides along the axis, and has a limited range specified by the upper and lower limits.
-        fixed - This is not really a joint because it cannot move. All degrees of freedom are locked.
-                This type of joint does not require the axis, calibration, dynamics, limits or safety_controller.
-        floating - This joint allows motion for all 6 degrees of freedom.
-        planar - This joint allows motion in a plane perpendicular to the axis.-->
-    <joint name="joint1_2" type="continuous">
-        <!--parent link generally is the link closer to root-->
+    <!--    Joints are where the kinematic data is stored, as well as relations to their attached links-->
+    <!--    Their rotation type is stored as an attribute, types of joints are as follows:
+                revolute - a hinge joint that rotates along the axis and has a limited range specified by the upper and lower limits.
+                continuous - a continuous hinge joint that rotates around the axis and has no upper and lower limits.
+                prismatic - a sliding joint that slides along the axis, and has a limited range specified by the upper and lower limits.
+                fixed - This is not really a joint because it cannot move. All degrees of freedom are locked.
+                        This type of joint does not require the axis, calibration, dynamics, limits or safety_controller.
+                floating - This joint allows motion for all 6 degrees of freedom.
+                planar - This joint allows motion in a plane perpendicular to the axis.-->
+    <joint name="joint1_2" type="revolute">
+        <!--Parent link generally is the link closer to root-->
         <parent link="link1"/>
-        <!--child link generally is the link further from root-->
+        <!--Child link generally is the link further from root-->
         <child link="link2"/>
-        <!--joint origin defines the transform properties relative to the last joint, like a link
+        <!--Joint origin defines the transform properties relative to the last joint, like a link
             AKA the joint with a child link name that matches this joint's parent link name
-            default xyz = 0 0 0
-            default rpy = 0 0 0-->
+                default xyz = 0 0 0
+                default rpy = 0 0 0-->
         <origin xyz="0 0 1" rpy="0 0 0"/>
         <!--axis defines the axis of rotation. these values behave better when vector is normalized
-            default xyz = 1 0 0 -->
+                default xyz = 1 0 0 -->
         <axis xyz="-0.9 0.15 0"/>
-        <!--    if a joint is not fixed, URDF as a format requires limits on effort and velocity, but for many solvers,
-            these are not explicitly required, so our parser does not require them for instantiation of joints -->
-        <!--assumed default effort (taken from documentation examples): 1000
-            velocity values for different joints:
-            revolute: radians/sec
-            prismatic: meters/sec
+        <!--    If a joint is revolute or prismatic, URDF as a format requires limits on effort and velocity, but for many solvers,
+            these are not explicitly required, so our parser does not require them for instantiation of joints.
+            Upper and lower limits ARE, unsurprisingly, routinely used in kinematics calculations, and should be added
+            where-->
+        <!--Assumed default effort (taken from documentation examples): 1000
+            upper/lower limit values for joints:
+                revolute: radians
+                prismatic: meters
+            velocity values for joints:
+                revolute: radians/sec
+                prismatic: meters/sec
             -->
-        <limit effort="1000.0" velocity="0.5"/>
+        <limit lower="-1.57" upper="3.14" effort="1000.0" velocity="0.5"/>
     </joint>
 
     <link name="link2">
-        <!--    note that when visualizing the next joint, its displacement is along two axes, so the visuals compensate
+        <!--    Note that when visualizing the next joint, its displacement is along two axes, so the visuals compensate
             by the first displacing itself halfway along one axis, then the second displacing itself the entirety of
-            the first axis's displacement, and then halfway along the second. this can be done in any order and can even
+            the first axis's displacement, and then halfway along the second. This can be done in any order and can even
             extrapolate to a third displacement by following similar steps, with displacement fully along two axes, and
             halfway down the third.
-            sizing rules for contiguity apply, but only with the current size dimension needing to equate to the dimension
-            being 'spanned'-->
+                Sizing rules for contiguity apply, but only with the current size dimension needing to equate to the
+            dimension being 'spanned'-->
         <visual>
             <origin xyz="-.25 0 0" rpy="0 0 0"/>
             <geometry>
@@ -124,6 +129,7 @@
         <child link="link3"/>
         <origin xyz="-.5 .5 0" rpy="0 0 1.57"/>
         <axis xyz="-0.707 0.707 0"/>
+        <limit effort="1000.0" velocity="0.5"/>
     </joint>
 
     <link name="link3">
@@ -135,11 +141,11 @@
             <material name="grey"/>
         </visual>
     </link>
-    <joint name="joint3_4" type="continuous">
+    <joint name="joint3_4" type="prismatic">
         <parent link="link3"/>
         <child link="link4"/>
         <origin xyz="1 0 0" rpy="0 0 -1.57"/>
-        <axis xyz="0.707 -0.707 0"/>
+        <limit lower="-1" upper="0" effort="1000.0" velocity="0.5"/>
     </joint>
 
     <link name="link4">
