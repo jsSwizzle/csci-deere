@@ -1,9 +1,27 @@
 from abc import ABC
 
+import numpy as np
+from scipy.spatial.transform import Rotation as R
 from arm_controller.chains.py_chain import PyChain
 
 
+def matrix4x4_to_xyz_rpy(matrix):
+    xyz = matrix[:-1, -1]
+    r = R.from_matrix(matrix[:-1, :-1])
+    rpy = r.as_rotvec()
+    return xyz, rpy
+
+
+def xyz_rpy_to_matrix4x4(xyz, rpy):
+    matrix = np.eye(4)
+    r = R.from_rotvec(rpy)
+    matrix[:-1, :-1] = r.as_matrix()
+    matrix[:-1, -1] = xyz
+    return matrix
+
+
 class AbstractSolver(ABC):
+    chain: PyChain
     def __init__(self, chain: PyChain):
         """Abstract Kinematic Solver class.
         """
@@ -22,6 +40,7 @@ class AbstractSolver(ABC):
         Returns:
             angles {list[float]} -- list of angles for each rotating joint in the chain.
         """
+
     def forward_solve(self, angles, **kwargs):
         """
         Finds the (x, y, z, roll, pitch, yaw) position of the end effector of the chain.
@@ -40,4 +59,3 @@ class AbstractSolver(ABC):
         Returns:
 
         """
-

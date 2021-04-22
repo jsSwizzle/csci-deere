@@ -7,6 +7,7 @@ from arm_controller.chains.py_segment import PySegment
 from PyKDL import *
 import math
 
+from arm_controller.chains.urdf_object import JointType
 from arm_controller.solvers.abstract_solver import AbstractSolver
 
 
@@ -15,36 +16,43 @@ class PyKDLSolver(AbstractSolver):
     def __init__(self, chain: PyChain):
         """Basic constructor for Solver class.
         """
+        self.chain = chain
         self._kdlChain = Chain()
         joint_mins = JntArray(chain.number_of_joints())
         joint_maxs = JntArray(chain.number_of_joints())
         i = 0
         # for segment in chain.segments:
         for jnt in chain.urdf.joints:
-            rotation_frame = Frame(Rotation.EulerZYX(np.rad2deg(jnt.origin_rpy[0]),
+            rotation_frame = Frame(Rotation.EulerZYX(np.rad2deg(jnt.origin_rpy[2]),
                                                      np.rad2deg(jnt.origin_rpy[1]),
-                                                     np.rad2deg(jnt.origin_rpy[2])))
+                                                     np.rad2deg(jnt.origin_rpy[0])))
             vector_frame = Frame(Vector(jnt.origin_xyz[0], jnt.origin_xyz[1], jnt.origin_xyz[2]))
             frame = rotation_frame * vector_frame
             joint = None
-            if jnt.axis_xyz == None:
+            if jnt.type == JointType.FIXED | jnt.axis_xyz is None:
                 joint = Joint()
-            elif jnt.axis_xyz[0] > 0:
+            elif jnt.axis_xyz[0] == 1 | jnt.axis_xyz[0] == -1:
                 joint = Joint(Joint.RotX)
-            elif jnt.axis_xyz[1] > 0:
+            elif jnt.axis_xyz[1] == 1 | jnt.axis_xyz[1] == -1:
                 joint = Joint(Joint.RotY)
-            elif jnt.axis_xyz[2] > 0:
+            elif jnt.axis_xyz[2] == 1 | jnt.axis_xyz[2] == -1:
                 joint = Joint(Joint.RotZ)
             self._kdlChain.addSegment(Segment(joint, frame))
-            if jnt.joint_rot != None:
+            if jnt.limit_lower is not None:
                 joint_mins[i] = math.radians(jnt.limit_lower)
+            if jnt.limit_upper is not None:
                 joint_maxs[i] = math.radians(jnt.limit_upper)
                 i += 1
 
         self._fkSolver = ChainFkSolverPos_recursive(self._kdlChain)
         self._ikSolverVel = ChainIkSolverVel_pinv(self._kdlChain)
-        self._ikSolver = ChainIkSolverPos_NR_JL(self._kdlChain, joint_mins, joint_maxs, self._fkSolver,
-                                                self._ikSolverVel, 10_000)
+        self._ikSolver = ChainIkSolverPos_NR_JL(self._kdlChain,
+                                                joint_mins,
+                                                joint_maxs,
+                                                self._fkSolver,
+                                                self._ikSolverVel,
+                                                10_000)
+
     def inverse_solve(self, target_coords=[0, 0, 0], target_rpy=[0, 0, 0], **kwargs) -> list[float]:
         """Finds the angles for each joint of the arm given a target end effector.
 
@@ -76,6 +84,7 @@ class PyKDLSolver(AbstractSolver):
             angles.append(math.degrees(angle))
 
         return angles
+
     def forward_solve(self, angles, **kwargs):
         """Finds the (x, y, z, roll, pitch, yaw) position of the end effector of the chain.
 

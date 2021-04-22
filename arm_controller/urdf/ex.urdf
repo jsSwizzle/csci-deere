@@ -7,31 +7,47 @@
     <material name="cyan1">
         <color rgba="0 0.9 0.9 1.0"/>
     </material>
-    <!--links are primarily used for visualization / collision, but are required between pairs of joints-->
+    <!--    links are primarily used for visualization / collision, but are required between pairs of joints-->
+    <!--    in most cases, there is a base link and subsequent joint representing an initial point in world space before
+        the chain of joints proper-->
+    <link name="link0">
+        <visual>
+            <origin xyz=".5 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="1 0.1 0.1"/>
+            </geometry>
+            <material name="cyan1"/>
+        </visual>
+    </link>
+    <joint name="joint0_1" type="fixed">
+        <parent link="link0"/>
+        <child link="link1"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
     <link name="link1">
         <visual>
-            <!--visual and collision origin defines the transform properties relative to the parent joint
+            <!--    visual and collision origin defines the transform properties relative to the parent joint
                 AKA the joint with this link named as its child link
                 default xyz = 0 0 0
                 default rpy = 0 0 0-->
             <origin xyz="0 0 .5" rpy="0 0 0"/>
-            <!--geometry types and their attributes are as follows
-            box - size: Vector[0,0,0]
-            cylinder - radius: float, length: float
-            sphere - radius: float
-            mesh - filename: str, scale: float
+            <!--    geometry types and their attributes are as follows
+                box - size: list[x,y,z]
+                cylinder - radius: float, length: float
+                sphere - radius: float
+                mesh - filename: str, scale: float
             -->
             <geometry>
                 <box size="0.1 0.2 1"/>
             </geometry>
-            <!--a material is required for a visual, but it can be named the same as a material defined elsewhere,
+            <!--    a material is required for a visual, but it can be named the same as a material defined elsewhere,
                 as is the case here-->
             <material name="cyan1"/>
         </visual>
     </link>
 
-    <!--joints are where the kinematic data is stored, as well as relations to their attached links-->
-    <!--types of joints are as follows:
+    <!--    joints are where the kinematic data is stored, as well as relations to their attached links-->
+    <!--    their rotation type is stored as an attribute, types of joints are as follows:
         revolute - a hinge joint that rotates along the axis and has a limited range specified by the upper and lower limits.
         continuous - a continuous hinge joint that rotates around the axis and has no upper and lower limits.
         prismatic - a sliding joint that slides along the axis, and has a limited range specified by the upper and lower limits.
@@ -51,7 +67,7 @@
         <origin xyz="0 0 1" rpy="0 0 0"/>
         <!--axis defines the axis of rotation
             these values behave better when vector is normalized
-            default xyz = 0 0 0 -->
+            default xyz = 1 0 0 -->
         <axis xyz="-0.9 0.15 0"/>
     </joint>
 

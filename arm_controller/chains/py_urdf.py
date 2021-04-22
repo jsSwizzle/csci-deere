@@ -1,12 +1,9 @@
 """URDF parser / static methods
 """
 import xml.etree.ElementTree as ET
-from xml.etree.ElementTree import Element
 
-from arm_controller.urdf.urdf_joint import URDFJoint
-from arm_controller.urdf.urdf_link import URDFLink
-from arm_controller.urdf.urdf_material import URDFMaterial
-from arm_controller.urdf.urdf_object import URDFObject
+
+from arm_controller.chains.urdf_object import URDFObject, URDFMaterial, URDFCollision, URDFVisual, URDFLink, URDFJoint
 
 
 class PyURDF:
@@ -60,4 +57,4 @@ class PyURDF:
 
 if __name__ == '__main__':
     # urdf = PyURDF.parse('mechatronics_arm.urdf')
-    urdf = PyURDF.parse('armageddon.urdf')
+    urdf = PyURDF.parse('../urdf/armageddon.urdf')

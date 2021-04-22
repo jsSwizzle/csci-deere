@@ -1,9 +1,6 @@
-<robot name="MechaArm">
+<robot name="Mechatronics Arm">
     <material name="cyan1">
         <color rgba="0 0.9 0.9 1.0"/>
-    </material>
-    <material name="cyan1">
-        <color rgba="0 0.95 0.95 1.0"/>
     </material>
     <material name="cyan2">
         <color rgba="0 0.4 0.4 1.0"/>
