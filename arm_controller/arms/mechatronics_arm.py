@@ -127,7 +127,7 @@ class MechatronicsArm(AbstractArm):
             joint {str} -- joint to move.
             value {float} -- value to apply to joint.
         """
-        if vlaue == None:
+        if value == None:
             return
 
         target_value = value

@@ -95,7 +95,7 @@ class PlotterArm(AbstractArm):
         Sets each servo to its default position found in the servo_info dictionary
         created during class initialization.
         """
-        for joint in reversed(self._chain.joints):
+        for joint in dict(reversed(list(self._chain.joints.items()))):
             self.set_joint(joint, self._chain.joints[joint]['default_value'])
 
     def set_joint(self, joint, value):
