@@ -1,14 +1,12 @@
 """Plotter class that can be used as a visual representation of a chain/arm.
 """
 import os
-import enum
 import math
-import numpy as np
+from time import sleep
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 from multiprocessing import Process, Manager
-from time import sleep
 
 from arm_controller.arms.abstract_arm import AbstractArm
 from arm_controller.solvers.ikpy_solver import IKPySolver
@@ -23,7 +21,7 @@ class PlotterArm(AbstractArm):
         filepath = os.path.join(dirname, '../urdf/mechatronics_arm.urdf')
         self._chain = PyChain(urdf_file_path=filepath)
 
-        self._servo_speed = 10.0
+        self._servo_speed = math.radians(10)
         self._solver = IKPySolver(self._chain)
 
         # variables animation depends on
@@ -51,7 +49,7 @@ class PlotterArm(AbstractArm):
 
         Return:
             current_xyz {list} -- a list containing the (x, y, z) position of the claw.
-            current_rpy {list} -- a list containing the (r, p, y) of the claw.
+            PlotterArmcurrent_rpy {list} -- a list containing the (r, p, y) of the claw.
         """
         current_angles = self._chain.get_current_values()
         current_xyz, current_rpy = self._solver.forward_solve(current_angles)

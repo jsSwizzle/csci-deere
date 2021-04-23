@@ -5,8 +5,6 @@ import numpy as np
 from ikpy import chain as ikpc
 from arm_controller.chains.py_chain import PyChain
 from arm_controller.solvers.abstract_solver import AbstractSolver, matrix4x4_to_xyz_rpy
-import matplotlib.pyplot as plt
-
 
 class IKPySolver(AbstractSolver):
 
@@ -70,8 +68,3 @@ class IKPySolver(AbstractSolver):
             coords.append(matrix4x4_to_xyz_rpy(mtx)[0])
         return coords
         pass
-
-if __name__ == '__main__':
-    chain = PyChain(urdf_file_path='../urdf/ex.urdf')
-    solver = IKPySolver(chain)
-    print(solver)

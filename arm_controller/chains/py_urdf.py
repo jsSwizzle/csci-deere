@@ -53,9 +53,3 @@ class PyURDF:
                 joints.append(jnt)
 
         return URDFObject(name, filepath, materials, links, joints)
-
-
-if __name__ == '__main__':
-    # urdf = PyURDF.parse('../urdf/mechatronics_arm.urdf')
-    urdf = PyURDF.parse('../urdf/ex.urdf')
-    print(urdf)

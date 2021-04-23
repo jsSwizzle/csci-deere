@@ -26,7 +26,9 @@ setuptools.setup(
         "adafruit_servokit",
         "matplotlib",
         "numpy",
-        "ikpy"
+        "scipy",
+        "ikpy",
+        "roboticstoolbox"
     ],
     python_requires=">=3.6"
 )

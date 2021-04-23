@@ -2,7 +2,6 @@ from enum import Enum
 from xml.etree.ElementTree import Element
 import numpy as np
 
-
 class URDFMaterial:
     """
     Object representation of a URDF Material
@@ -18,7 +17,6 @@ class URDFMaterial:
             self.texture = tex.attrib['filename']
         else:
             self.texture = None
-
 
 class JointType(Enum):
     """
@@ -77,7 +75,6 @@ class GeometryType(Enum):
     CYLINDER = 'cylinder'
     SPHERE = 'sphere'
     MESH = 'mesh'
-
 
 class URDFVisual:
     """
