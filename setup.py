@@ -23,12 +23,12 @@ setuptools.setup(
         "arm_controller.test"
     ],
     install_requires=[
-        "adafruit_servokit",
+        "adafruit-circuitpython-servokit",
         "matplotlib",
         "numpy",
         "scipy",
         "ikpy",
-        "roboticstoolbox"
+        "roboticstoolbox-python"
     ],
     python_requires=">=3.6"
 )

@@ -30,7 +30,6 @@ class PlotterArm(AbstractArm):
         self.anim_variables['exit'] = False # variable to tell animation to exit
 
         for joint in self._chain.joints:
-            print(f'{joint}')
             self.anim_variables[joint] = self._chain.joints[joint]['current_value']
 
         self.proc = Process(target=run_animation, args=(self.anim_variables, self._solver))
