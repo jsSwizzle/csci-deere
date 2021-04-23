@@ -28,12 +28,14 @@ class IKPySolver(AbstractSolver):
             target_coords (list[float]): target end effector XYZ coordinates.
             target_rpy (list[float]): target end effector Roll, Pitch, and Yaw.
             **kwargs:
-                orientation_mode: which axis to focus on in solution
+                orientation_mode (str): which axis to focus on in solution {'X', 'Y', 'Z'}
+                defaults to 'X'
         Returns:
             angles (list[float]): list of angles for each rotating joint in the chain.
         """
-        ornt_mode = kwargs['orientation_mode']
-        if ornt_mode is None:
+        if 'orientation_mode' in kwargs:
+            ornt_mode = kwargs['orientation_mode']
+        else:
             ornt_mode = 'X'
         return self._chain.inverse_kinematics(target_position=target_coords,
                                               target_orientation=target_rpy,

@@ -10,6 +10,10 @@ class PyChain():
         self.segments = []
         if urdf_file_path is not None:
             self.urdf = PyURDF.parse(urdf_file_path)
+        self.joints = {}
+        for joint in self.urdf.joints:
+                self.joints[joint.name] = {'current_value': 0.0}
+
 
     def number_of_segments(self):
         """Returns the number of segments within the chain.

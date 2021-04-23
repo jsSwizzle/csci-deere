@@ -164,33 +164,33 @@
             <material name="black"/>
         </visual>
     </link>
-    <joint name="claw_left" type="fixed">
-        <parent link="wrist_pitch_claw_link"/>
-        <child link="claw_left_link"/>
-        <origin xyz="0 .015 0" rpy="0 0 0"/>
-    </joint>
-    <link name="claw_left_link">
-        <visual>
-            <origin xyz="0 .015 .03" rpy="0 0 0"/>
-            <geometry>
-                <box size="0.012 0.02 0.06"/>
-            </geometry>
-            <material name="white"/>
-        </visual>
-    </link>
+<!--    <joint name="claw_left" type="fixed">-->
+<!--        <parent link="wrist_pitch_claw_link"/>-->
+<!--        <child link="claw_left_link"/>-->
+<!--        <origin xyz="0 .015 0" rpy="0 0 0"/>-->
+<!--    </joint>-->
+<!--    <link name="claw_left_link">-->
+<!--        <visual>-->
+<!--            <origin xyz="0 .015 .03" rpy="0 0 0"/>-->
+<!--            <geometry>-->
+<!--                <box size="0.012 0.02 0.06"/>-->
+<!--            </geometry>-->
+<!--            <material name="white"/>-->
+<!--        </visual>-->
+<!--    </link>-->
 
-    <joint name="claw_right" type="fixed">
-        <parent link="wrist_pitch_claw_link"/>
-        <child link="claw_right_link"/>
-        <origin xyz="0 -.015 0" rpy="0 0 0"/>
-    </joint>
-    <link name="claw_right_link">
-        <visual>
-            <origin xyz="0 -.015 .03" rpy="0 0 0"/>
-            <geometry>
-                <box size="0.012 0.02 0.06"/>
-            </geometry>
-            <material name="white"/>
-        </visual>
-    </link>
+<!--    <joint name="claw_right" type="fixed">-->
+<!--        <parent link="wrist_pitch_claw_link"/>-->
+<!--        <child link="claw_right_link"/>-->
+<!--        <origin xyz="0 -.015 0" rpy="0 0 0"/>-->
+<!--    </joint>-->
+<!--    <link name="claw_right_link">-->
+<!--        <visual>-->
+<!--            <origin xyz="0 -.015 .03" rpy="0 0 0"/>-->
+<!--            <geometry>-->
+<!--                <box size="0.012 0.02 0.06"/>-->
+<!--            </geometry>-->
+<!--            <material name="white"/>-->
+<!--        </visual>-->
+<!--    </link>-->
 </robot>
