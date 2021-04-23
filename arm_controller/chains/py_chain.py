@@ -2,22 +2,17 @@
 """
 from arm_controller.chains.py_urdf import PyURDF, URDFObject
 
-
 class PyChain():
     def __init__(self, urdf_file_path):
         """Basic constructor for PyChain class.
+        
+        Args:
+            urdf_file_path {str} -- path to the urdf file to use to parse out the URDF objects.
         """
-        self.segments = []
-        if urdf_file_path is not None:
-            self.urdf = PyURDF.parse(urdf_file_path)
-
-    def number_of_segments(self):
-        """Returns the number of segments within the chain.
-
-        Returns:
-            segments (int): number of segments in the chain.
-        """
-        return len(self.segments)
+        self.urdf = PyURDF.parse(urdf_file_path)
+        self.joints = {}
+        for joint in self.urdf.joints:
+            self.joints[joint.name] = {'current_value': 0.0, 'default_value': joint.limit_lower}
 
     def number_of_joints(self):
         """Returns the number of rotating joints within the chain.
@@ -25,20 +20,37 @@ class PyChain():
         Returns:
             joints (int): number of rotating joints within the chain.
         """
-        joints = 0
-        for segment in self.segments:
-            if segment.joint_rot != None:
-                joints += 1
-        return joints
+        return len(self.joints)
 
     def get_current_values(self):
         """Gets the current values of each rotating joint in the chain.
-
+        
         Returns:
-            current_values (list): list containing each rotating joints current value.
+            current_values {list} -- list containing each rotating joints current value (in degrees).
         """
         current_values = []
-        for segment in self.segments:
-            if segment.joint_rot != None:
-                current_values.append(segment.current_val)
+        for joint in self.joints:
+            current_values.append(self.joints[joint]['current_value'])
         return current_values
+
+    def set_default_values(self, defaults):
+        """Set the default values for the rotatable joints in the chain.
+
+        Args:
+            defaults {list} -- list of defaults for all movable joints in the chain.
+        """
+        i = 0
+        for joint in self.joints:
+            self.joints[joint]['default_value'] = defaults[i]
+            i += 1
+
+    def get_default_values(self):
+        """Gets the default values of each rotating joint in the chain.
+
+        Returns:
+            default_values {list} -- list containg each rotating joints default value (in degrees).
+        """
+        default_values = []
+        for joint in self.joints:
+            default_values.append(self.joints[joint]['default_value'])
+        return default_values

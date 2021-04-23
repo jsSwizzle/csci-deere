@@ -1,9 +1,7 @@
 """URDF parser / static methods
 """
 import xml.etree.ElementTree as ET
-
 from arm_controller.chains.urdf_object import URDFObject, URDFMaterial, URDFCollision, URDFVisual, URDFLink, URDFJoint
-
 
 class PyURDF:
 

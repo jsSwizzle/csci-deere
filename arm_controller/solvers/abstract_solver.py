@@ -1,9 +1,6 @@
 from abc import ABC
-
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-from arm_controller.chains.py_chain import PyChain
-
 
 def matrix4x4_to_xyz_rpy(matrix):
     xyz = matrix[:-1, -1]
@@ -21,8 +18,6 @@ def xyz_rpy_to_matrix4x4(xyz, rpy):
 
 
 class AbstractSolver(ABC):
-    chain: PyChain
-
     def __init__(self, chain):
         """Abstract Kinematic Solver class.
         """
