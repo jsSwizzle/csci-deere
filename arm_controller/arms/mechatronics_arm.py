@@ -22,7 +22,7 @@ class MechatronicsArm(AbstractArm):
         """
 
         dirname = os.path.dirname(__file__)
-        filepath = os.path.join(dirname '../urdf/mechatronics_arm.urdf')
+        filepath = os.path.join(dirname, '../urdf/mechatronics_arm.urdf')
         self._chain = PyChain(urdf_file_path=filepath)
 
         self._servo_speed = math.radians(10.0)
@@ -32,6 +32,8 @@ class MechatronicsArm(AbstractArm):
 
         self._kit = ServoKit(channels=16)
         self.configure_board()
+
+        self.set_default_position()
 
     def get_pos(self):
         """Calculates and returns current position of the arm.
@@ -113,7 +115,7 @@ class MechatronicsArm(AbstractArm):
         Sets each servo to its default position found in the servo_info dictionary
         created during class initialization.
         """
-        for joint in self._chain.joints:
+        for joint in reversed(self._chain.joints):
             self.set_joint(joint, self._chain.joints[joint]['default_value'])
         self.open_claw()
 
@@ -148,7 +150,7 @@ class MechatronicsArm(AbstractArm):
 
         self._chain.joints[joint]['current_value'] = value
 
-    def configure_board(self, mapping={'base'=None,'waist'=0,'shoulder'=1,'elbow'=2,'wrist_roll'=3,'wrist_pitch'=4,'claw'=5}):
+    def configure_board(self, mapping={'base':None,'waist':0,'shoulder':1,'elbow':2,'wrist_roll':3,'wrist_pitch':4,'claw':5}):
         """Configures the joints with information with use with the Adafruit Servokit.
 
         Arguments:

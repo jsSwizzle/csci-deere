@@ -95,7 +95,7 @@ class PlotterArm(AbstractArm):
         Sets each servo to its default position found in the servo_info dictionary
         created during class initialization.
         """
-        for joint in self._chain.joints:
+        for joint in reversed(self._chain.joints):
             self.set_joint(joint, self._chain.joints[joint]['default_value'])
 
     def set_joint(self, joint, value):
@@ -140,11 +140,11 @@ def run_animation(anim_variables, solver):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.set_xlabel('X Position')
-    ax.set_xlim(left=-0.15, right=0.15)
+    ax.set_xlim(left=-0.20, right=0.20)
     ax.set_ylabel('Y Position')
-    ax.set_ylim(bottom=-0.15, top=0.15)
+    ax.set_ylim(bottom=-0.20, top=0.20)
     ax.set_zlabel('Z Position')
-    ax.set_zlim(bottom=-0.15, top=0.15)
+    ax.set_zlim(bottom=-0.05, top=0.2)
     ax.set_title('3D Plot of Robot Arm')
 
     # inner function called to animate
