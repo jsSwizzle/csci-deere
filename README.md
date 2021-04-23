@@ -27,6 +27,6 @@ This library requires at least Python Version 3, and is OS Independent without t
 
 ## Stretch Goals
 
-* Accept arm specification JSON to use various different arms
-* Use camera to specify desired movement of arm
-* Provide virtual simulation of arm for pre-build/simulated testing
+* [X] Accept arm specification URDF/XML to use various different arms
+* [ ] Use camera to specify desired movement of arm
+* [X] Provide virtual simulation of arm for pre-build/simulated testing
