@@ -14,6 +14,7 @@ import math
 from time import sleep
 from arm_controller.solvers.ikpy_solver import IKPySolver
 from arm_controller.chains.py_chain import PyChain
+from arm_controller.arms.abstract_arm import AbstractArm
 from adafruit_servokit import ServoKit
 
 class MechatronicsArm(AbstractArm):
