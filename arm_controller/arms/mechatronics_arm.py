@@ -94,7 +94,7 @@ class MechatronicsArm(AbstractArm):
             value {float} -- degree to set claw servo to (default is 80.0).
         """
         if value > 0.0 or value < 180.0:
-            self._kit.servo[self._claw_joint_no].angle = value
+            self._kit.servo[self._chain.joints['claw']['servo#']].angle = value
             self._current_claw_value = value
 
     def close_claw(self, value=30.0):
@@ -107,7 +107,7 @@ class MechatronicsArm(AbstractArm):
             value {float} -- degree to set claw servo to (default is 30.0).
         """
         if value > 0.0 or value < 180.0:
-            self._kit.servo[self._claw_joint_no].angle = value
+            self._kit.servo[self._chain.joints['claw']['servo#']].angle = value
             self._claw_value = value
 
     def set_default_position(self):
