@@ -54,7 +54,7 @@ class PlotterArm(AbstractArm):
         current_xyz, current_rpy = self._solver.forward_solve(current_angles)
         return current_xyz, current_rpy
 
-    def set_speed(self, ss):
+    def set_speed(self, ss, radians=False):
         """Set's the speed at which the servo's move.
 
         Set's the arm rate of speed at which the servo's move into position.
@@ -64,9 +64,12 @@ class PlotterArm(AbstractArm):
 
         Returns:
             ss {float} -- Returns the new servo speed in radians per second.
+            radians {bool} -- Whether the servo speed is given in radians or degrees per second.
         """
-        if ss > 1.0:
+        if ss > 1.0 and not radians:
             self._servo_speed = math.radians(ss)
+        elif ss > 1.0 and radians:
+            self._servo_speed = ss
         return self._servo_speed
 
     def move_to(self, x_pos, y_pos, z_pos, roll=0, pitch=0, yaw=0):
@@ -96,17 +99,21 @@ class PlotterArm(AbstractArm):
         created during class initialization.
         """
         for joint in dict(reversed(list(self._chain.joints.items()))):
-            self.set_joint(joint, self._chain.joints[joint]['default_value'])
+            self.set_joint(joint, self._chain.joints[joint]['default_value'], radians=True)
 
-    def set_joint(self, joint, value):
+    def set_joint(self, joint, value, radians=False):
         """Moves the specified segment to the given value.
 
         Arguments:
             joint {str} -- joint to move.
             value {float} -- value to apply to joint.
+            radians {bool} -- whether the value given is in radians or degrees.
         """
         if value == None:
             return
+
+        if not radians:
+            value = math.radians(value)
 
         target_value = value
         current_value = self._chain.joints[joint]['current_value']
