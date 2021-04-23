@@ -21,7 +21,7 @@ class PlotterArm(AbstractArm):
         filepath = os.path.join(dirname, '../urdf/mechatronics_arm.urdf')
         self._chain = PyChain(urdf_file_path=filepath)
 
-        self._servo_speed = math.radians(10)
+        self._servo_speed = math.radians(20)
         self._solver = IKPySolver(self._chain)
 
         # variables animation depends on
@@ -89,7 +89,7 @@ class PlotterArm(AbstractArm):
         angles = self._solver.inverse_solve([x_pos, y_pos, z_pos], [roll, pitch, yaw])
         i = 0
         for joint in self._chain.joints:
-            self.set_joint(joint, angles[i])
+            self.set_joint(joint, angles[i], radians=True)
             i += 1
 
     def set_default_position(self):
