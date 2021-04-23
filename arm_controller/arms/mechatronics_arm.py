@@ -116,7 +116,7 @@ class MechatronicsArm(AbstractArm):
         Sets each servo to its default position found in the servo_info dictionary
         created during class initialization.
         """
-        for joint in dict(reversed(list(d.items()))):
+        for joint in dict(reversed(list(self._chain.joints.items()))):
             self.set_joint(joint, self._chain.joints[joint]['default_value'])
         self.open_claw()
 
