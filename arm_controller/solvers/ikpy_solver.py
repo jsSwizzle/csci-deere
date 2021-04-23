@@ -4,7 +4,6 @@ import ikpy.utils.geometry
 import numpy as np
 from ikpy import chain as ikpc
 from arm_controller.chains.py_chain import PyChain
-from arm_controller.chains.py_segment import PySegment
 from arm_controller.solvers.abstract_solver import AbstractSolver, matrix4x4_to_xyz_rpy
 import matplotlib.pyplot as plt
 
@@ -26,7 +25,10 @@ class IKPySolver(AbstractSolver):
             :keyword orientation_mode:
         :return: angles_list
         """
-        ornt_mode = kwargs['orientation_mode']
+        if len(kwargs) != 0:
+            ornt_mode = kwargs['orientation_mode']
+        else:
+            ornt_mode = None
         if ornt_mode is None:
             ornt_mode = 'X'
         return self._chain.inverse_kinematics(target_position=target_coords,

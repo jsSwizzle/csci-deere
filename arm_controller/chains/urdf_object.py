@@ -22,12 +22,10 @@ class JointType(Enum):
     FLOATING = 'floating'
     PLANAR = 'planar'
 
-
 class URDFJoint:
     """
     Our representation of URDF Joints
     """
-
     def __init__(self, joint, parent, child, origin, axis, limit):
         self.name = joint.attrib['name']
         self.type = JointType(joint.attrib['type'])
@@ -35,13 +33,15 @@ class URDFJoint:
         self.child = child.attrib['link']
         self.origin_xyz = np.array(origin.attrib['xyz'].split()).astype(float)
         self.origin_rpy = np.array(origin.attrib['rpy'].split()).astype(float)
+        self.axis_xyz = [0, 0, 0]
         if axis is not None:
             v3 = np.array(axis.attrib['xyz'].split())
             self.axis_xyz = v3
+        self.limit_lower = None
+        self.limit_upper = None
         if limit is not None:
             self.limit_lower = float(limit.attrib['lower'])
             self.limit_upper = float(limit.attrib['upper'])
-
 
 class GeometryType(Enum):
     """
@@ -62,7 +62,6 @@ class URDFVisual:
             self.geo_attrib[key] = geometry[0].attrib[key]
         self.mat_name = material.attrib['name']
 
-
 class URDFCollision:
     def __init__(self, origin, geometry):
         self.origin_xyz = np.array(origin.attrib['xyz'].split()).astype(float)
@@ -71,7 +70,6 @@ class URDFCollision:
         self.geometry_attrib = {}
         for key in geometry[0].attrib:
             self.geometry_attrib[key] = geometry[0].attrib[key]
-
 
 class URDFLink:
     def __init__(self, link, visuals, collisions):
@@ -94,7 +92,6 @@ class URDFLink:
                     coll.find('material')
                 )
             )
-
 
 class URDFObject:
     def __init__(self, path, mats, links, joints):

@@ -164,6 +164,8 @@
             <material name="black"/>
         </visual>
     </link>
+
+    <!--
     <joint name="claw_left" type="fixed">
         <parent link="wrist_pitch_claw_link"/>
         <child link="claw_left_link"/>
@@ -193,4 +195,5 @@
             <material name="white"/>
         </visual>
     </link>
+    -->
 </robot>
