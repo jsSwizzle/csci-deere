@@ -5,7 +5,7 @@ from arm_controller.chains.py_urdf import PyURDF, URDFObject
 class PyChain():
     def __init__(self, urdf_file_path):
         """Basic constructor for PyChain class.
-
+        
         Args:
             urdf_file_path {str} -- path to the urdf file to use to parse out the URDF objects.
         """
@@ -18,13 +18,13 @@ class PyChain():
         """Returns the number of rotating joints within the chain.
 
         Returns:
-            joints {int} -- number of rotating joints within the chain.
+            joints (int): number of rotating joints within the chain.
         """
         return len(self.joints)
 
     def get_current_values(self):
         """Gets the current values of each rotating joint in the chain.
-
+        
         Returns:
             current_values {list} -- list containing each rotating joints current value (in degrees).
         """

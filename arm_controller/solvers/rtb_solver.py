@@ -34,12 +34,11 @@ class RTBSolver(AbstractSolver):
         effector (x_pos, y_pos, z_pos, roll, pitch, yaw) in cartesion space.
 
         Args:
-            target_coords {list} -- target end effector XYZ coordinates.
-            target_rpy {list} -- target end effector Roll, Pitch, and Yaw.
-            initial_angles {list} -- initial angle position for each rotating joint in the chain.
+            target_coords (list[float]): target end effector XYZ coordinates.
+            target_rpy (list): target end effector Roll, Pitch, and Yaw.
 
         Returns:
-            angles {list} -- list of angles for each rotating joint in the chain.
+            angles (list): list of angles for each rotating joint in the chain.
         """
         initial_angles = np.array(kwargs['initial_angles'])
         end_link = kwargs['end_link']
@@ -56,15 +55,12 @@ class RTBSolver(AbstractSolver):
         effector of the arm using the given angles of each of the joints.
 
         Args:
-            current_angles {list} -- list of current angles of each rotating joint in the chain.
-
+            angles (list): list of current angles of each rotating joint in the chain.
+            **kwargs:
+                end_link: name of end effector to calculate
         Returns:
-            coords {list} -- list containing XYZ coordinates of the end effector.
-            rpy {list} -- list containing Roll, Pitch, and Yaw of the end effector.
-
-            :param angles:
-            :param **kwargs:
-            :keyword end_link: name of end link of chain for calculation
+            coords (list): list containing XYZ coordinates of the end effector.
+            rpy (list): list containing Roll, Pitch, and Yaw of the end effector.
         """
         end_link = kwargs['end_link']
         return matrix4x4_to_xyz_rpy(self._robot.fkine(angles, end_link).A)
@@ -73,7 +69,7 @@ class RTBSolver(AbstractSolver):
         """Finds the (x, y, z) position of every joint in the chain (including the end effector).
 
         Returns:
-            coords {list} -- 2 dimensional list containing sets of (X, Y, Z) coordinates of each joint.
+            coords (list): 2 dimensional list containing sets of (X, Y, Z) coordinates of each joint.
         """
         tuples = []
         for link in self.chain.urdf.links:
