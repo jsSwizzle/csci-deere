@@ -137,17 +137,17 @@ class MechatronicsArm(AbstractArm):
         if(current_value > target_value):
             while((current_value - target_value) >= step):
                 current_value = current_value - step
-                self._kit.servo[self._chains.joints[joint]['servo#']].angle = current_value
+                self._kit.servo[self._chain.joints[joint]['servo#']].angle = current_value
                 sleep(0.5)
             if((current_value - target_value) != 0.0):
-                self._kit.servo[self._chains.joints[joint]['servo#']].angle = target_value
+                self._kit.servo[self._chain.joints[joint]['servo#']].angle = target_value
         elif(target_value > current_value):
             while((target_value - current_value) >= step):
                 current_value = current_value + step
-                self._kit.servo[self._chains.joints[joint]['servo#']].angle = current_value
+                self._kit.servo[self._chain.joints[joint]['servo#']].angle = current_value
                 sleep(0.5)
             if((target_value - current_value) != 0.0):
-                self._kit.servo[self._chains.joints[joint]['servo#']].angle = target_value
+                self._kit.servo[self._chain.joints[joint]['servo#']].angle = target_value
 
         self._chain.joints[joint]['current_value'] = value
 
