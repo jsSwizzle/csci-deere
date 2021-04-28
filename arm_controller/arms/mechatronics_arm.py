@@ -156,6 +156,8 @@ class MechatronicsArm(AbstractArm):
         if radians:
             value = math.degrees(value)
 
+        print(f'Setting {joint} to {value}')
+
         target = value
         current = math.degrees(self.chain.joints[joint]['current_value'])
         step = math.degrees(self._servo_speed) / 2 # divide by two here to allow for half second sleeps
