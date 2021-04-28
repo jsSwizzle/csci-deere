@@ -74,4 +74,7 @@ class IKPySolver(AbstractSolver):
 if __name__ == '__main__':
     chain = PyChain(urdf_file_path='../urdf/ex.urdf')
     solver = IKPySolver(chain)
-    print(solver)
+    ik = solver.inverse_solve(target_coords=[.06,.06,.09],target_rpy=[0,90,0], orientation_mode='Y')
+    fk = solver.forward_solve(angles=ik)
+    print(ik)
+    print(fk)

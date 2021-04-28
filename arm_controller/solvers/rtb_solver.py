@@ -97,7 +97,7 @@ class RTBSolver(AbstractSolver):
 if __name__ == '__main__':
     chain = PyChain(urdf_file_path='../urdf/mechatronics_arm.urdf')
     solver = RTBSolver(chain)
-    ik = solver.inverse_solve(target_coords=[.06, .06, .09], target_rpy=[0, 135, 0])
+    ik = solver.inverse_solve(target_coords=[.06, .06, .09], target_rpy=[0, 90, 0])
     fk = solver.forward_solve(angles=ik)
     sfk = solver.segmented_forward_solve(angles=ik)
     print(solver)

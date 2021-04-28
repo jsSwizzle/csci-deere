@@ -48,9 +48,9 @@ class PlotterArm(AbstractArm):
         Calculates based on current positions of arm servo's, the
         current position of the claw, returning as (x, y, z).
 
-        Return:
-            current_xyz {list} -- a list containing the (x, y, z) position of the claw.
-            current_rpy {list} -- a list containing the (r, p, y) of the claw.
+        Returns:
+            current_xyz (list[float]): a list containing the (x, y, z) position of the claw.
+            current_rpy (list[float]): a list containing the (r, p, y) of the claw.
         """
         current_angles = self._chain.get_current_values()
         current_xyz, current_rpy = self._solver.forward_solve(current_angles)
@@ -62,10 +62,10 @@ class PlotterArm(AbstractArm):
         Set's the arm rate of speed at which the servo's move into position.
 
         Args:
-            ss {float} -- Rate of speed on a 1-10 scale: 1 being slowest, 10 being fastest.
+            ss (float): Rate of speed on a 1-10 scale: 1 being slowest, 10 being fastest.
 
         Returns:
-            ss {float} -- Returns the new servo speed.
+            ss (float): Returns the new servo speed.
         """
         if ss > 1.0:
             self._servo_speed = ss
@@ -78,11 +78,12 @@ class PlotterArm(AbstractArm):
         position (x_pos, y_pos, z_pos).
 
         Args:
-            x_pos {float} -- Final X position of the claw.
-            y_pos {float} -- Final Y position of the claw.
-            z_pos {float} -- Final Z position of the claw.
-            roll {float} -- Final roll angle of the wrist (default to 0).
-            pitch {float} -- Final pitch angle of the wrist (default to 0).
+            x_pos (float): Final X position of the claw.
+            y_pos (float): Final Y position of the claw.
+            z_pos (float): Final Z position of the claw.
+            roll (float): Final roll angle of the wrist (default to 0).
+            pitch (float): Final pitch angle of the wrist (default to 0).
+            yaw (float): Final yaw angle of the wrist (default to 0).
         """
         current_angles = self._chain.get_current_values()
         angles = self._solver.inverse_solve(current_angles, [x_pos, y_pos, z_pos], [roll, pitch, yaw])

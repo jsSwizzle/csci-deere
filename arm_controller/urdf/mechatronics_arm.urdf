@@ -43,6 +43,7 @@
     <joint name="waist" type="revolute">
         <parent link="base_waist_link"/>
         <child link="waist_shoulder_link"/>
+<!--        <origin xyz="0 0 .09893" rpy="0 0 1.57"/>-->
         <origin xyz="0 0 .04293" rpy="0 0 1.57"/>
         <axis xyz="0 0 1"/>
         <limit lower="-1.57" upper="1.57" effort="1000.0" velocity="0.5"/>
