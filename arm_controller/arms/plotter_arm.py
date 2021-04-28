@@ -129,28 +129,32 @@ class PlotterArm(AbstractArm):
         if not radians:
             value = math.radians(value)
 
-        # target_value = value
-        # current_value = self._chain.joints[joint]['current_value']
-        # step = self._servo_speed / 2
-        #
-        # if(current_value > target_value):
-        #     while((current_value - target_value) >= step):
-        #         current_value = current_value - step
-        #         self.anim_variables[joint] = current_value
-        #         sleep(0.5)
-        #
-        #     if((current_value - target_value) != 0.0):
-        #         self.anim_variables[joint] = target_value
-        #
-        # elif(target_value > current_value):
-        #     while((target_value - current_value) >= step):
-        #         current_value = current_value + step
-        #         self.anim_variables[joint] = current_value
-        #         sleep(0.5)
-        #
-        #     if((target_value - current_value) != 0.0):
-        #         self.anim_variables[joint] = target_value
+        target = value
+        current = self._chain.joints[joint]['current_value']
+        step = self._servo_speed / 2 # divide by two here to allow for half second sleeps
 
+        if (current > target):
+            # current angle is LARGER than the target angle so we decrement it to get closer
+            while (current - target) > step:
+                current = current - step
+                self.anim_variables[joint] = current
+                sleep(0.5)
+            else:
+                self.anim_variables[joint] = target
+
+        elif (target > current):
+            pass # current angle is SMALLER than the target angle so we increment it to get closer
+            while (target - current) > step:
+                current = current + step
+                self.anim_variables[joint] = current
+                sleep(0.5)
+            else:
+                self.anim_variables[joint] = target
+        else:
+            # current angle is EQUAL to the target angle
+            self.anim_variables[joint] = target
+
+        # failsafe catches
         self.anim_variables[joint] = value
         self._chain.joints[joint]['current_value'] = value
 
