@@ -159,10 +159,11 @@ class MechatronicsArm(AbstractArm):
         print(f'Setting {joint} to {value}')
 
         target = value
-        current = round(math.degrees(self.chain.joints[joint]['current_value']), 1)
+        current = math.degrees(self.chain.joints[joint]['current_value'])
         step = math.degrees(self._servo_speed) / 2 # divide by two here to allow for half second sleeps
 
         if (current > target):
+            print(f'C: {current} > t: {target}')
             # current angle is LARGER than the target angle so we decrement it to get closer
             while (current - target) > step:
                 current = current - step
@@ -172,6 +173,7 @@ class MechatronicsArm(AbstractArm):
                 self._kit.servo[self.chain.joints[joint]['servo#']].angle = target
 
         elif (target > current):
+            print(f't: {target} > c: {current}')
             # current angle is SMALLER than the target angle so we increment it to get closer
             while (target - current) > step:
                 current = current + step
