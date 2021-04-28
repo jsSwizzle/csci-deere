@@ -188,7 +188,7 @@ class MechatronicsArm(AbstractArm):
 
         # failsafe catches and set current values in chain
         self._kit.servo[self.chain.joints[joint]['servo#']].angle = value
-        self.chain.joints[joint]['current_value'] = value
+        self.chain.joints[joint]['current_value'] = math.radians(value)
 
     def configure_board(self, mapping={'waist':0,'shoulder':1,'elbow':2,'wrist_roll':3,'wrist_pitch':4,'claw':5}):
         """Configures the joints with information with use with the Adafruit Servokit.
