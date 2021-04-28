@@ -24,12 +24,11 @@ class MechatronicsArm(AbstractArm):
 
         dirname = os.path.dirname(__file__)
         filepath = os.path.join(dirname, '../urdf/mechatronics_arm.urdf')
-        self._chain = PyChain(urdf_file_path=filepath)
+        self.chain = PyChain(urdf_file_path=filepath)
 
-        self._servo_speed = math.radians(10.0)
-        self._solver = IKPySolver(self._chain)
-
-        self._current_claw_value = 0.0
+        # servo speed in rads / sec
+        self._servo_speed = math.radians(20.0)
+        self._solver = IKPySolver(self.chain)
 
         self._kit = ServoKit(channels=16)
         self.configure_board()
@@ -46,7 +45,7 @@ class MechatronicsArm(AbstractArm):
             current_xyz {list} -- a list containing the (x, y, z) position of the claw.
             current_rpy {list} -- a list containing the (r, p, y) of the claw.
         """
-        current_angles = self._chain.get_current_values()
+        current_angles = self.chain.get_current_values()
         current_xyz, current_rpy = self._solver.forward_solve(current_angles)
         return current_xyz, current_rpy
 
@@ -62,13 +61,13 @@ class MechatronicsArm(AbstractArm):
             ss {float} -- Returns the new servo speed.
             radians {bool} -- Whether the servo speed is given in radians or degrees per second.
         """
-        if ss > 1.0 and not radians:
+        if ss >= 1.0 and not radians:
             self._servo_speed = math.radians(ss)
-        elif ss > 1.0 and radians:
+        elif ss >= 0.016 and radians:
             self._servo_speed = ss
         return self._servo_speed
 
-    def move_to(self, x_pos, y_pos, z_pos, roll=0, pitch=0, yaw=0):
+    def move_to(self, x_pos, y_pos, z_pos, roll=0, pitch=0, yaw=0, radians=False):
         """Moves the arm to the specified position.
 
         Calculates and moves the arm so the claw is centered at the
@@ -80,12 +79,24 @@ class MechatronicsArm(AbstractArm):
             z_pos {float} -- Final Z position of the claw.
             roll {float} -- Final roll angle of the wrist (default to 0).
             pitch {float} -- Final pitch angle of the wrist (default to 0).
+            radians {bool} -- whether the values given is in radians or degrees.
+
+        Return:
+            angles {list} -- list of the angles the arm is being set to (in radians).
         """
-        angles = self._solver.inverse_solve([x_pos, y_pos, z_pos], [roll, pitch, yaw])
+        if not radians:
+            roll_rad = math.radians(roll)
+            pitch_rad = math.radians(pitch)
+            yaw_rad = math.radians(yaw)
+
+        angles = self._solver.inverse_solve([x_pos, y_pos, z_pos], [roll_rad, pitch_rad, yaw_rad])
+
         i = 0
-        for joint in self._chain.joints:
-            self.set_joint(segment, angles[i])
+        for joint in self.chain.joints:
+            self.set_joint(segment, angles[i], radians=True)
             i += 1
+
+        return angles
 
     def open_claw(self, value=80.0, radians=False):
         """Opens the claw of the robot arm.
@@ -100,8 +111,8 @@ class MechatronicsArm(AbstractArm):
         if radians:
             value = math.degrees(value)
         if value > 0.0 or value < 180.0:
-            self._kit.servo[self._chain.joints['claw']['servo#']].angle = value
-            self._chain.joints['claw']['current_value'] = math.radians(value)
+            self._kit.servo[self.chain.joints['claw']['servo#']].angle = value
+            self.chain.joints['claw']['current_value'] = math.radians(value)
 
     def close_claw(self, value=30.0, radians=False):
         """Closes the claw of the robot arm.
@@ -116,8 +127,8 @@ class MechatronicsArm(AbstractArm):
         if radians:
             value = math.degrees(value)
         if value > 0.0 or value < 180.0:
-            self._kit.servo[self._chain.joints['claw']['servo#']].angle = value
-            self._chain.joints['claw']['current_value'] = math.radians(value)
+            self._kit.servo[self.chain.joints['claw']['servo#']].angle = value
+            self.chain.joints['claw']['current_value'] = math.radians(value)
 
     def set_default_position(self):
         """Loads the default position for the robot arm.
@@ -127,8 +138,8 @@ class MechatronicsArm(AbstractArm):
         """
         self.set_joint('elbow', 0, radians=False)
         self.set_joint('shoulder', 150, radians=False)
-        for joint in dict(reversed(list(self._chain.joints.items()))):
-            self.set_joint(joint, self._chain.joints[joint]['default_value'], radians=True)
+        for joint in self.chain.joints:
+            self.set_joint(joint, self.chain.joints[joint]['default_value'], radians=True)
         self.open_claw()
 
     def set_joint(self, joint, value, radians=False):
@@ -145,32 +156,41 @@ class MechatronicsArm(AbstractArm):
         if radians:
             value = math.degrees(value)
 
-        target_value = value
-        current_value = math.degrees(self._chain.joints[joint]['current_value'])
-        step = math.degrees(self._servo_speed) / 2
+        target = value
+        current = math.degrees(self.chain.joints[joint]['current_value'])
+        step = math.degrees(self._servo_speed) / 2 # divide by two here to allow for half second sleeps
 
-        if(current_value > target_value):
-            while((current_value - target_value) >= step):
-                current_value = current_value - step
-                self._kit.servo[self._chain.joints[joint]['servo#']].angle = current_value
+        if (current > target):
+            # current angle is LARGER than the target angle so we decrement it to get closer
+            while (current - target) > step:
+                current = current - step
+                self._kit.servo[self.chain.joints[joint]['servo#']].angle = current
                 sleep(0.5)
-            if((current_value - target_value) != 0.0):
-                self._kit.servo[self._chain.joints[joint]['servo#']].angle = target_value
-        elif(target_value > current_value):
-            while((target_value - current_value) >= step):
-                current_value = current_value + step
-                self._kit.servo[self._chain.joints[joint]['servo#']].angle = current_value
+            else:
+                self._kit.servo[self.chain.joints[joint]['servo#']].angle = target
+
+        elif (target > current):
+            # current angle is SMALLER than the target angle so we increment it to get closer
+            while (target - current) > step:
+                current = current + step
+                self._kit.servo[self.chain.joints[joint]['servo#']].angle = current
                 sleep(0.5)
-            if((target_value - current_value) != 0.0):
-                self._kit.servo[self._chain.joints[joint]['servo#']].angle = target_value
+            else:
+                self._kit.servo[self.chain.joints[joint]['servo#']].angle = target
 
-        self._chain.joints[joint]['current_value'] = math.radians(value)
+        else:
+            # current angle is EQUAL to the target angle
+            self._kit.servo[self.chain.joints[joint]['servo#']].angle = target
 
-    def configure_board(self, mapping={'base':None,'waist':0,'shoulder':1,'elbow':2,'wrist_roll':3,'wrist_pitch':4,'claw':5}):
+        # failsafe catches and set current values in chain
+        self._kit.servo[self.chain.joints[joint]['servo#']].angle = value
+        self.chain.joints[joint]['current_value'] = value
+
+    def configure_board(self, mapping={'waist':0,'shoulder':1,'elbow':2,'wrist_roll':3,'wrist_pitch':4,'claw':5}):
         """Configures the joints with information with use with the Adafruit Servokit.
 
         Arguments:
             mapping {dict} -- mapping from the joint names (same as the URDF model) to their servo number (use None for joints without servos).
         """
         for joint in mapping:
-            self._chain.joints[joint]['servo#'] = mapping[joint]
+            self.chain.joints[joint]['servo#'] = mapping[joint]
