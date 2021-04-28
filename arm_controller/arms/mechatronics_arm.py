@@ -159,7 +159,7 @@ class MechatronicsArm(AbstractArm):
         print(f'Setting {joint} to {value}')
 
         target = value
-        current = math.degrees(self.chain.joints[joint]['current_value'])
+        current = round(math.degrees(self.chain.joints[joint]['current_value']), 1)
         step = math.degrees(self._servo_speed) / 2 # divide by two here to allow for half second sleeps
 
         if (current > target):
