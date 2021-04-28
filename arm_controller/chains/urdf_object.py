@@ -1,3 +1,6 @@
+"""File containing different URDF Object representations
+"""
+
 from enum import Enum
 from xml.etree.ElementTree import Element
 import numpy as np

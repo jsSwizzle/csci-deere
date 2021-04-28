@@ -91,12 +91,11 @@ class PyKDLSolver(AbstractSolver):
         effector of the arm using the given angles of each of the joints.
 
         Args:
-            angles (list): list of current angles of each rotating joint in the chain.
+            angles (list[float]): list of current angles of each rotating joint in the chain.
             **kwargs:
-
         Returns:
-            coords (list): list containing XYZ coordinates of the end effector.
-            rpy (list): list containing Roll, Pitch, and Yaw of the end effector.
+            coords (list[float]): list containing XYZ coordinates of the end effector.
+            rpy (list[float]): list containing Roll, Pitch, and Yaw of the end effector.
         """
         fkJointInitial = JntArray(self._kdlChain.getNrOfJoints())
 

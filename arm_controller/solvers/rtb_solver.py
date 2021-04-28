@@ -69,13 +69,14 @@ class RTBSolver(AbstractSolver):
         effector of the arm using the given angles of each of the joints.
 
         Args:
-            angles (list): list of current angles of each rotating joint in the chain.
+            angles (list[float]): list of current angles of each rotating joint in the chain.
             **kwargs:
                 end_link: name of end effector to calculate
         Returns:
-            coords (list): list containing XYZ coordinates of the end effector.
-            rpy (list): list containing Roll, Pitch, and Yaw of the end effector.
+            coords (list[float]): list containing XYZ coordinates of the end effector.
+            rpy (list[float]): list containing Roll, Pitch, and Yaw of the end effector.
         """
+
         if 'end_link' in kwargs:
             end_link = kwargs['end_link']
         else:
@@ -86,7 +87,7 @@ class RTBSolver(AbstractSolver):
         """Finds the (x, y, z) position of every joint in the chain (including the end effector).
 
         Returns:
-            coords (list): 2 dimensional list containing sets of (X, Y, Z) coordinates of each joint.
+            coords (list[float]): 2 dimensional list containing sets of (X, Y, Z) coordinates of each joint.
         """
         tuples = []
         for link in self.chain.urdf.links:

@@ -23,7 +23,7 @@ def matrix4x4_to_xyz_rpy(matrix):
 
 
 def xyz_rpy_to_matrix4x4(xyz, rpy):
-    """Takes xyz coordinates and rpy values and returns a matrix created from those values
+    """Takes xyz coordinates and rpy values and returns a 4x4 transformation matrix created from those values
 
     Args:
         xyz(list[float]): x,y,z coordinates
@@ -67,9 +67,9 @@ class AbstractSolver(ABC):
         effector of the arm using the given angles of each of the joints.
 
         Args:
-            angles (list): list of current angles of each rotating joint in the chain.
+            angles (list[float]): list of current angles of each rotating joint in the chain.
             **kwargs:
         Returns:
-            coords (list): list containing XYZ coordinates of the end effector.
-            rpy (list): list containing Roll, Pitch, and Yaw of the end effector.
+            coords (list[float]): list containing XYZ coordinates of the end effector.
+            rpy (list[float]): list containing Roll, Pitch, and Yaw of the end effector.
         """

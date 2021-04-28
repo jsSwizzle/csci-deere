@@ -45,6 +45,9 @@ class AbstractArm(ABC):
         Set's the arm rate of speed at which the servo's move into position.
 
         Args:
-            ss (int): Rate of speed on a 1-10 scale: 1 being slowest, 10 being fastest.
+            ss (float): Rate of speed on a 1-10 scale: 1 being slowest, 10 being fastest.
+
+        Returns:
+            ss (float): Returns the new servo speed.
         """
         pass

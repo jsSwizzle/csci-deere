@@ -107,8 +107,8 @@ class PlotterArm(AbstractArm):
         """Moves the specified segment to the given value.
 
         Arguments:
-            segment {PySegment} -- segment to move.
-            value {float} -- value to apply to joint.
+            segment (PySegment): segment to move.
+            value (float): value to apply to joint.
         """
         target_value = value
         current_value = segment.current_val
@@ -134,9 +134,9 @@ class PlotterArm(AbstractArm):
 def run_animation(anim_variables, solver):
     """Runs an animation on the given plotter arm.
 
-    Arguments:
-        arm {PlotterArm} -- plotter arm to run animation on
-
+    Args:
+        anim_variables:
+        solver:
     """
     # matplotlib objects
     fig = plt.figure()

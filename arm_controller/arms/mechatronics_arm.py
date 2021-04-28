@@ -135,8 +135,8 @@ class MechatronicsArm(AbstractArm):
         """Moves the specified segment to the given value.
 
         Arguments:
-            segment {PySegment} -- segment to move.
-            value {float} -- value to apply to joint.
+            segment (PySegment): segment to move.
+            value (float): value to apply to joint.
         """
         target_value = value
         current_value = segment.current_val
