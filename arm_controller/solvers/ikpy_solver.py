@@ -27,16 +27,10 @@ class IKPySolver(AbstractSolver):
         Returns:
             angles (list[float]): list of angles for each rotating joint in the chain.
         """
-        if len(kwargs) != 0:
-            ornt_mode = kwargs['orientation_mode']
-        else:
-            ornt_mode = None
-        if ornt_mode is None:
-            ornt_mode = 'X'
 
         coords = np.array(target_coords)
         rpy = np.array(target_rpy)
-        return self._chain.inverse_kinematics(target_position=coords, target_orientation=rpy, orientation_mode=ornt_mode)
+        return self._chain.inverse_kinematics(target_position=coords, target_orientation=rpy)
 
     def forward_solve(self, angles, **kwargs):
         """Finds the (x, y, z, roll, pitch, yaw) position of the end effector of the chain.
