@@ -1,6 +1,5 @@
 """Implementation of Solver Class to solve Kinematics of Arm Class using IKPy library.
 """
-import ikpy.utils.geometry
 import numpy as np
 from ikpy import chain as ikpc
 from arm_controller.chains.py_chain import PyChain
