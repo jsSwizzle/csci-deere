@@ -35,7 +35,7 @@ class PyChain():
             current_values.append(self.joints[joint]['current_value'])
         return current_values
 
-    def set_default_values(self, defaults={'base':None,'waist':90.0,'shoulder':150.0,'elbow':35.0,'wrist_roll':140.0,'wrist_pitch':85.0,'claw':None}):
+    def set_default_values(self, defaults={'waist':90.0,'shoulder':150.0,'elbow':35.0,'wrist_roll':140.0,'wrist_pitch':85.0,'claw':None}):
         """Set the default values for the rotatable joints in the chain.
 
         Args:

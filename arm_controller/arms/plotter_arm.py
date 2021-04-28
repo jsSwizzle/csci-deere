@@ -19,18 +19,19 @@ class PlotterArm(AbstractArm):
 
         dirname = os.path.dirname(__file__)
         filepath = os.path.join(dirname, '../urdf/mechatronics_arm.urdf')
-        self._chain = PyChain(urdf_file_path=filepath)
+        self.chain = PyChain(urdf_file_path=filepath)
 
+        # servo speed in rads / sec
         self._servo_speed = math.radians(20)
-        self._solver = IKPySolver(self._chain)
+        self._solver = IKPySolver(self.chain)
 
         # variables animation depends on
         self.manager = Manager()
         self.anim_variables = self.manager.dict()
         self.anim_variables['exit'] = False # variable to tell animation to exit
 
-        for joint in self._chain.joints:
-            self.anim_variables[joint] = self._chain.joints[joint]['current_value']
+        for joint in self.chain.joints:
+            self.anim_variables[joint] = self.chain.joints[joint]['current_value']
 
         self.proc = Process(target=run_animation, args=(self.anim_variables, self._solver))
         self.proc.start()
@@ -50,7 +51,7 @@ class PlotterArm(AbstractArm):
             current_xyz {list} -- a list containing the (x, y, z) position of the claw.
             PlotterArmcurrent_rpy {list} -- a list containing the (r, p, y) of the claw.
         """
-        current_angles = self._chain.get_current_values()
+        current_angles = self.chain.get_current_values()
         current_xyz, current_rpy = self._solver.forward_solve(current_angles)
         return current_xyz, current_rpy
 
@@ -66,13 +67,13 @@ class PlotterArm(AbstractArm):
             ss {float} -- Returns the new servo speed in radians per second.
             radians {bool} -- Whether the servo speed is given in radians or degrees per second.
         """
-        if ss > 1.0 and not radians:
+        if ss >= 1.0 and not radians:
             self._servo_speed = math.radians(ss)
-        elif ss > 1.0 and radians:
+        elif ss >= 0.016 and radians:
             self._servo_speed = ss
         return self._servo_speed
 
-    def move_to(self, x_pos, y_pos, z_pos, roll=0, pitch=0, yaw=0):
+    def move_to(self, x_pos, y_pos, z_pos, roll=0, pitch=0, yaw=0, radians=False):
         """Moves the arm to the specified position.
 
         Calculates and moves the arm so the claw is centered at the
@@ -85,12 +86,24 @@ class PlotterArm(AbstractArm):
             roll {float} -- Final roll angle of the wrist (default to 0).
             pitch {float} -- Final pitch angle of the wrist (default to 0).
             yaw {float} -- Final yaw angle of the wrist (default to 0).
+            radians {bool} -- whether the values given is in radians or degrees.
+
+        Return:
+            angles {list} -- list of the angles the arm is being set to (in radians).
         """
-        angles = self._solver.inverse_solve([x_pos, y_pos, z_pos], [roll, pitch, yaw])
+        if not radians:
+            roll_rad = math.radians(roll)
+            pitch_rad = math.radians(pitch)
+            yaw_rad = math.radians(yaw)
+
+        angles = self._solver.inverse_solve([x_pos, y_pos, z_pos], [roll_rad, pitch_rad, yaw_rad])
+
         i = 0
-        for joint in self._chain.joints:
+        for joint in self.chain.joints:
             self.set_joint(joint, angles[i], radians=True)
             i += 1
+
+        return angles
 
     def set_default_position(self):
         """Loads the default position for the robot arm.
@@ -100,8 +113,8 @@ class PlotterArm(AbstractArm):
         """
         self.set_joint('elbow', 0, radians=False)
         self.set_joint('shoulder', 150, radians=False)
-        for joint in dict(reversed(list(self._chain.joints.items()))):
-            self.set_joint(joint, self._chain.joints[joint]['default_value'], radians=True)
+        for joint in self.chain.joints:
+            self.set_joint(joint, self.chain.joints[joint]['default_value'], radians=True)
 
     def set_joint(self, joint, value, radians=False):
         """Moves the specified segment to the given value.
@@ -117,26 +130,35 @@ class PlotterArm(AbstractArm):
         if not radians:
             value = math.radians(value)
 
-        target_value = value
-        current_value = self._chain.joints[joint]['current_value']
-        step = self._servo_speed / 2
+        target = value
+        current = self.chain.joints[joint]['current_value']
+        step = self._servo_speed / 2 # divide by two here to allow for half second sleeps
 
-        if(current_value > target_value):
-            while((current_value - target_value) >= step):
-                current_value = current_value - step
-                self.anim_variables[joint] = current_value
+        if (current > target):
+            # current angle is LARGER than the target angle so we decrement it to get closer
+            while (current - target) > step:
+                current = current - step
+                self.anim_variables[joint] = current
                 sleep(0.5)
-            if((current_value - target_value) != 0.0):
-                self.anim_variables[joint] = target_value
-        elif(target_value > current_value):
-            while((target_value - current_value) >= step):
-                current_value = current_value + step
-                self.anim_variables[joint] = current_value
-                sleep(0.5)
-            if((target_value - current_value) != 0.0):
-                self.anim_variables[joint] = target_value
+            else:
+                self.anim_variables[joint] = target
 
-        self._chain.joints[joint]['current_value'] = value
+        elif (target > current):
+            # current angle is SMALLER than the target angle so we increment it to get closer
+            while (target - current) > step:
+                current = current + step
+                self.anim_variables[joint] = current
+                sleep(0.5)
+            else:
+                self.anim_variables[joint] = target
+
+        else:
+            # current angle is EQUAL to the target angle
+            self.anim_variables[joint] = target
+
+        # failsafe catches and set current values in chain
+        self.anim_variables[joint] = value
+        self.chain.joints[joint]['current_value'] = value
 
 def run_animation(anim_variables, solver):
     """Runs an animation on the given plotter arm.
@@ -182,4 +204,3 @@ def run_animation(anim_variables, solver):
     while not anim_variables['exit']:
         plt.pause(0.01)
     plt.close()
-    print('Exiting Animation Process')
