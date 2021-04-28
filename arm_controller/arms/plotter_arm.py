@@ -1,14 +1,12 @@
 """Plotter class that can be used as a visual representation of a chain/arm.
 """
 import os
-import enum
 import math
-import numpy as np
+from time import sleep
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 from multiprocessing import Process, Manager
-from time import sleep
 
 from arm_controller.arms.abstract_arm import AbstractArm
 from arm_controller.solvers.ikpy_solver import IKPySolver
@@ -23,7 +21,7 @@ class PlotterArm(AbstractArm):
         filepath = os.path.join(dirname, '../urdf/mechatronics_arm.urdf')
         self._chain = PyChain(urdf_file_path=filepath)
 
-        self._servo_speed = 10.0
+        self._servo_speed = math.radians(20)
         self._solver = IKPySolver(self._chain)
 
         # variables animation depends on
@@ -32,7 +30,6 @@ class PlotterArm(AbstractArm):
         self.anim_variables['exit'] = False # variable to tell animation to exit
 
         for joint in self._chain.joints:
-            print(f'{joint}')
             self.anim_variables[joint] = self._chain.joints[joint]['current_value']
 
         self.proc = Process(target=run_animation, args=(self.anim_variables, self._solver))
@@ -51,13 +48,13 @@ class PlotterArm(AbstractArm):
 
         Return:
             current_xyz {list} -- a list containing the (x, y, z) position of the claw.
-            current_rpy {list} -- a list containing the (r, p, y) of the claw.
+            PlotterArmcurrent_rpy {list} -- a list containing the (r, p, y) of the claw.
         """
         current_angles = self._chain.get_current_values()
         current_xyz, current_rpy = self._solver.forward_solve(current_angles)
         return current_xyz, current_rpy
 
-    def set_speed(self, ss):
+    def set_speed(self, ss, radians=False):
         """Set's the speed at which the servo's move.
 
         Set's the arm rate of speed at which the servo's move into position.
@@ -67,9 +64,12 @@ class PlotterArm(AbstractArm):
 
         Returns:
             ss {float} -- Returns the new servo speed in radians per second.
+            radians {bool} -- Whether the servo speed is given in radians or degrees per second.
         """
-        if ss > 1.0:
+        if ss > 1.0 and not radians:
             self._servo_speed = math.radians(ss)
+        elif ss > 1.0 and radians:
+            self._servo_speed = ss
         return self._servo_speed
 
     def move_to(self, x_pos, y_pos, z_pos, roll=0, pitch=0, yaw=0):
@@ -89,7 +89,7 @@ class PlotterArm(AbstractArm):
         angles = self._solver.inverse_solve([x_pos, y_pos, z_pos], [roll, pitch, yaw])
         i = 0
         for joint in self._chain.joints:
-            self.set_joint(joint, angles[i])
+            self.set_joint(joint, angles[i], radians=True)
             i += 1
 
     def set_default_position(self):
@@ -98,18 +98,24 @@ class PlotterArm(AbstractArm):
         Sets each servo to its default position found in the servo_info dictionary
         created during class initialization.
         """
-        for joint in self._chain.joints:
-            self.set_joint(joint, self._chain.joints[joint]['default_value'])
+        self.set_joint('elbow', 0, radians=False)
+        self.set_joint('shoulder', 150, radians=False)
+        for joint in dict(reversed(list(self._chain.joints.items()))):
+            self.set_joint(joint, self._chain.joints[joint]['default_value'], radians=True)
 
-    def set_joint(self, joint, value):
+    def set_joint(self, joint, value, radians=False):
         """Moves the specified segment to the given value.
 
         Arguments:
             joint {str} -- joint to move.
             value {float} -- value to apply to joint.
+            radians {bool} -- whether the value given is in radians or degrees.
         """
         if value == None:
             return
+
+        if not radians:
+            value = math.radians(value)
 
         target_value = value
         current_value = self._chain.joints[joint]['current_value']
@@ -143,11 +149,11 @@ def run_animation(anim_variables, solver):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.set_xlabel('X Position')
-    ax.set_xlim(left=-0.15, right=0.15)
+    ax.set_xlim(left=-0.20, right=0.20)
     ax.set_ylabel('Y Position')
-    ax.set_ylim(bottom=-0.15, top=0.15)
+    ax.set_ylim(bottom=-0.20, top=0.20)
     ax.set_zlabel('Z Position')
-    ax.set_zlim(bottom=-0.15, top=0.15)
+    ax.set_zlim(bottom=-0.05, top=0.2)
     ax.set_title('3D Plot of Robot Arm')
 
     # inner function called to animate

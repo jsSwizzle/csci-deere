@@ -43,9 +43,9 @@
     <joint name="waist" type="revolute">
         <parent link="base_waist_link"/>
         <child link="waist_shoulder_link"/>
-        <origin xyz="0 0 .04293" rpy="0 0 1.57"/>
+        <origin xyz="0 0 .04293" rpy="0 0 0"/>
         <axis xyz="0 0 1"/>
-        <limit lower="-1.57" upper="1.57" effort="1000.0" velocity="0.5"/>
+        <limit lower="0" upper="3.14" effort="1000.0" velocity="0.5"/>
     </joint>
     <link name="waist_shoulder_link">
         <visual>
@@ -68,7 +68,7 @@
         <child link="shoulder_elbow_link"/>
         <origin xyz="0 0 0" rpy="0 2.87979 0"/>
         <axis xyz="0 -1 0"/>
-        <limit lower="0" upper="2.87979" effort="1000.0" velocity="0.5"/>
+        <limit lower="0.2618" upper="3.14" effort="1000.0" velocity="0.5"/>
     </joint>
     <link name="shoulder_elbow_link">
         <visual>

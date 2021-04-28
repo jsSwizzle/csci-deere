@@ -1,11 +1,10 @@
 """Implementation of Solver Class to solve Kinematics of Arm Class using PyKDL library.
 """
+import math
 import numpy as np
+from PyKDL import *
 
 from arm_controller.chains.py_chain import PyChain
-from PyKDL import *
-import math
-
 from arm_controller.chains.urdf_object import JointType
 from arm_controller.solvers.abstract_solver import AbstractSolver
 
