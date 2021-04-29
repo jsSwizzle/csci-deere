@@ -12,6 +12,8 @@ class PyChain():
         for joint in self.urdf.joints:
                 self.joints[joint.name] = {'current_value': 0.0}
 
+        self.set_default_values()
+
 
     def number_of_segments(self):
         """Returns the number of segments within the chain.

@@ -19,8 +19,7 @@ setuptools.setup(
         "arm_controller",
         "arm_controller.arms",
         "arm_controller.chains",
-        "arm_controller.solvers",
-        "arm_controller.test"
+        "arm_controller.solvers"
     ],
     install_requires=[
         "numpy>=1.20.1",
