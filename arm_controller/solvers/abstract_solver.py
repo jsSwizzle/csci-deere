@@ -3,8 +3,6 @@
 from abc import ABC
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-from arm_controller.chains.py_chain import PyChain
-
 
 def matrix4x4_to_xyz_rpy(matrix):
     """Takes a 4x4 transformation matrix and returns a tuple of the xyz coordinates and rpy values extracted from the matrix
@@ -40,8 +38,6 @@ def xyz_rpy_to_matrix4x4(xyz, rpy):
 
 
 class AbstractSolver(ABC):
-    chain: PyChain
-
     def __init__(self, chain):
         """Abstract Kinematic Solver class.
         """

@@ -1,12 +1,12 @@
 """Implementation of Solver Class to solve Kinematics of Arm Class using IKPy library.
 """
 
-from arm_controller.chains.py_chain import PyChain
 import roboticstoolbox as rtb
 import roboticstoolbox.robot.ETS as ETS
 import numpy as np
 import os
 
+from arm_controller.chains.py_chain import PyChain
 from arm_controller.solvers.abstract_solver import AbstractSolver, matrix4x4_to_xyz_rpy, xyz_rpy_to_matrix4x4
 
 """Location for URDF files

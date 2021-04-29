@@ -1,12 +1,10 @@
 """Implementation of Solver Class to solve Kinematics of Arm Class using PyKDL library.
 """
+import math
 import numpy as np
+from PyKDL import *
 
 from arm_controller.chains.py_chain import PyChain
-from arm_controller.chains.py_segment import PySegment
-from PyKDL import *
-import math
-
 from arm_controller.chains.urdf_object import JointType
 from arm_controller.solvers.abstract_solver import AbstractSolver
 
@@ -28,20 +26,20 @@ class PyKDLSolver(AbstractSolver):
                                                      np.rad2deg(jnt.origin_rpy[0])))
             vector_frame = Frame(Vector(jnt.origin_xyz[0], jnt.origin_xyz[1], jnt.origin_xyz[2]))
             frame = rotation_frame * vector_frame
-            joint = None
-            if jnt.type == JointType.FIXED or jnt.axis_xyz is None:
-                joint = Joint()
-            elif jnt.axis_xyz[0] == 1 or jnt.axis_xyz[0] == -1:
+
+            joint = Joint()
+            if jnt.axis_xyz[0] == 1 or jnt.axis_xyz[0] == -1:
                 joint = Joint(Joint.RotX)
             elif jnt.axis_xyz[1] == 1 or jnt.axis_xyz[1] == -1:
                 joint = Joint(Joint.RotY)
             elif jnt.axis_xyz[2] == 1 or jnt.axis_xyz[2] == -1:
                 joint = Joint(Joint.RotZ)
             self._kdlChain.addSegment(Segment(joint, frame))
+
             if jnt.limit_lower is not None:
                 joint_mins[i] = math.radians(jnt.limit_lower)
-            if jnt.limit_upper is not None:
-                joint_maxs[i] = math.radians(jnt.limit_upper)
+                if jnt.limit_upper is not None:
+                    joint_maxs[i] = math.radians(jnt.limit_upper)
                 i += 1
 
         self._fkSolver = ChainFkSolverPos_recursive(self._kdlChain)
@@ -128,8 +126,9 @@ class PyKDLSolver(AbstractSolver):
 
         i = 0
         for angle in current_angles:
-            fkJointInitial[i] = math.radians(angle)
-            i += 1
+            if angle != None:
+                fkJointInitial[i] = math.radians(angle)
+                i += 1
 
         for j in range(0, self._kdlChain.getNrOfSegments()):
 

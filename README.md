@@ -24,9 +24,3 @@ This library requires at least Python Version 3, and is OS Independent without t
 ## Usage
 
 *Insert usage instructions for operating library*
-
-## Stretch Goals
-
-* Accept arm specification JSON to use various different arms
-* Use camera to specify desired movement of arm
-* Provide virtual simulation of arm for pre-build/simulated testing

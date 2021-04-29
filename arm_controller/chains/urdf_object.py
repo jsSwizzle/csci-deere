@@ -5,7 +5,6 @@ from enum import Enum
 from xml.etree.ElementTree import Element
 import numpy as np
 
-
 class URDFMaterial:
     """
     Object representation of a URDF Material
@@ -22,7 +21,6 @@ class URDFMaterial:
         else:
             self.texture = None
 
-
 class JointType(Enum):
     """
     Joint Rotation Type
@@ -34,12 +32,10 @@ class JointType(Enum):
     FLOATING = 'floating'
     PLANAR = 'planar'
 
-
 class URDFJoint:
     """
     Object representation of a URDF Joint
     """
-
     def __init__(self, joint, parent, child, origin, axis=None, limit=None):
         self.name = joint.attrib['name']
         self.type = JointType(joint.attrib['type'])
@@ -48,7 +44,7 @@ class URDFJoint:
         self.origin_xyz = np.array(origin.attrib['xyz'].split()).astype(float)
         self.origin_rpy = np.array(origin.attrib['rpy'].split()).astype(float)
         if axis is not None:
-            self.axis_xyz = np.array(axis.attrib['xyz'].split())
+            self.axis_xyz = np.array(axis.attrib['xyz'].split()).astype(float)
         else:
             self.axis_xyz = None
         if limit is not None:
@@ -74,7 +70,6 @@ class URDFJoint:
             self.limit_velocity = None
             self.limit_effort = None
 
-
 class GeometryType(Enum):
     """
     Geometry Shape Type
@@ -83,7 +78,6 @@ class GeometryType(Enum):
     CYLINDER = 'cylinder'
     SPHERE = 'sphere'
     MESH = 'mesh'
-
 
 class URDFVisual:
     """
@@ -105,7 +99,6 @@ class URDFVisual:
 
         self.mat_name = material.attrib['name']
 
-
 class URDFCollision:
     """
     Object representation of a URDF Collision
@@ -123,7 +116,6 @@ class URDFCollision:
                 self.geometry_attrib[key] = geometry[0].attrib[key]
             else:
                 self.geometry_attrib[key] = float(geometry[0].attrib[key])
-
 
 class URDFLink:
     """
@@ -150,7 +142,6 @@ class URDFLink:
                     coll.find('material')
                 )
             )
-
 
 class URDFObject:
     """
