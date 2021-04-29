@@ -47,9 +47,9 @@ class PlotterArm(AbstractArm):
         Calculates based on current positions of arm servo's, the
         current position of the claw, returning as (x, y, z).
 
-        Return:
-            current_xyz {list} -- a list containing the (x, y, z) position of the claw.
-            PlotterArmcurrent_rpy {list} -- a list containing the (r, p, y) of the claw.
+        Returns:
+            current_xyz (list[float]): a list containing the (x, y, z) position of the claw.
+            current_rpy (list[float]): a list containing the (r, p, y) of the claw.
         """
         current_angles = self.chain.get_current_values()
         current_xyz, current_rpy = self._solver.forward_solve(current_angles)
@@ -61,11 +61,11 @@ class PlotterArm(AbstractArm):
         Set's the arm rate of speed at which the servo's move into position.
 
         Args:
-            ss {float} -- Rate of servo speed in degrees per second.
-
+            ss (float): Rate of speed on a 1-10 scale: 1 being slowest, 10 being fastest.
+            radians (bool): Whether the servo speed is given in radians or degrees per second.
+          
         Returns:
-            ss {float} -- Returns the new servo speed in radians per second.
-            radians {bool} -- Whether the servo speed is given in radians or degrees per second.
+            ss (float): Returns the new servo speed.
         """
         if ss >= 1.0 and not radians:
             self._servo_speed = math.radians(ss)
@@ -80,16 +80,16 @@ class PlotterArm(AbstractArm):
         position (x_pos, y_pos, z_pos).
 
         Args:
-            x_pos {float} -- Final X position of the claw.
-            y_pos {float} -- Final Y position of the claw.
-            z_pos {float} -- Final Z position of the claw.
-            roll {float} -- Final roll angle of the wrist (default to 0).
-            pitch {float} -- Final pitch angle of the wrist (default to 0).
-            yaw {float} -- Final yaw angle of the wrist (default to 0).
-            radians {bool} -- whether the values given is in radians or degrees.
+            x_pos (float): Final X position of the claw.
+            y_pos (float): Final Y position of the claw.
+            z_pos (float): Final Z position of the claw.
+            roll (float): Final roll angle of the wrist (default to 0).
+            pitch (float): Final pitch angle of the wrist (default to 0).
+            yaw (float): Final yaw angle of the wrist (default to 0).
+            radians (bool): whether the values given is in radians or degrees.
 
         Return:
-            angles {list} -- list of the angles the arm is being set to (in radians).
+            angles (list): list of the angles the arm is being set to (in radians).
         """
         if not radians:
             roll_rad = math.radians(roll)
@@ -120,9 +120,9 @@ class PlotterArm(AbstractArm):
         """Moves the specified segment to the given value.
 
         Arguments:
-            joint {str} -- joint to move.
-            value {float} -- value to apply to joint.
-            radians {bool} -- whether the value given is in radians or degrees.
+            joint (str): joint to move.
+            value (float): value to apply to joint.
+            radians (bool) whether the value given is in radians or degrees.
         """
         if value == None:
             return
@@ -163,9 +163,9 @@ class PlotterArm(AbstractArm):
 def run_animation(anim_variables, solver):
     """Runs an animation on the given plotter arm.
 
-    Arguments:
-        arm {PlotterArm} -- plotter arm to run animation on
-
+    Args:
+        anim_variables:
+        solver:
     """
     # matplotlib objects
     fig = plt.figure()

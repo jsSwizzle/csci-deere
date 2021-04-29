@@ -41,9 +41,9 @@ class MechatronicsArm(AbstractArm):
         Calculates based on current positions of arm servo's, the
         current position of the claw, returning as (x, y, z).
 
-        Return:
-            current_xyz {list} -- a list containing the (x, y, z) position of the claw.
-            current_rpy {list} -- a list containing the (r, p, y) of the claw.
+        Returns:
+            current_xyz (list[float]): a list containing the (x, y, z) position of the claw.
+            current_rpy (list[float]): a list containing the (r, p, y) of the claw.
         """
         current_angles = self.chain.get_current_values()
         current_xyz, current_rpy = self._solver.forward_solve(current_angles)
@@ -55,11 +55,11 @@ class MechatronicsArm(AbstractArm):
         Set's the arm rate of speed at which the servo's move into position.
 
         Args:
-            ss {float} -- Rate of speed on a 1-10 scale: 1 being slowest, 10 being fastest.
+            ss (float): Rate of speed on a 1-10 scale: 1 being slowest, 10 being fastest.
 
         Returns:
-            ss {float} -- Returns the new servo speed.
-            radians {bool} -- Whether the servo speed is given in radians or degrees per second.
+            ss (float): Returns the new servo speed.
+            radians (bool): Whether the servo speed is given in radians or degrees per second.
         """
         if ss >= 1.0 and not radians:
             self._servo_speed = math.radians(ss)
@@ -74,15 +74,16 @@ class MechatronicsArm(AbstractArm):
         position (x_pos, y_pos, z_pos).
 
         Args:
-            x_pos {float} -- Final X position of the claw.
-            y_pos {float} -- Final Y position of the claw.
-            z_pos {float} -- Final Z position of the claw.
-            roll {float} -- Final roll angle of the wrist (default to 0).
-            pitch {float} -- Final pitch angle of the wrist (default to 0).
-            radians {bool} -- whether the values given is in radians or degrees.
-
+            x_pos (float): Final X position of the claw.
+            y_pos (float): Final Y position of the claw.
+            z_pos (float): Final Z position of the claw.
+            roll (float): Final roll angle of the wrist (default to 0).
+            pitch (float): Final pitch angle of the wrist (default to 0).
+            yaw (float): Final yaw angle of the wrist (default to 0).
+            radians (bool): whether the values given is in radians or degrees.
+            
         Return:
-            angles {list} -- list of the angles the arm is being set to (in radians).
+            angles (list): list of the angles the arm is being set to (in radians).
         """
         if not radians:
             roll_rad = math.radians(roll)
@@ -105,8 +106,8 @@ class MechatronicsArm(AbstractArm):
         value between 0.0 and 180.0 can be entered (for best results use 90.0 as maximum for opening).
 
         Args:
-            value {float} -- degree to set claw servo to (default is 80.0).
-            radians {bool} -- whether the value to close claw to is in radians or degrees.
+            value (float): degree to set claw servo to (default is 80.0).
+            radians (bool): whether the value to close claw to is in radians or degrees.
         """
         if radians:
             value = math.degrees(value)
@@ -121,8 +122,8 @@ class MechatronicsArm(AbstractArm):
         value between 0.0 and 180.0 can be entered (for best results use 30.0 as the minimum for closing).
 
         Args:
-            value {float} -- degree to set claw servo to (default is 30.0).
-            radians {bool} -- whether the value to close claw to is in radians or degrees.
+            value (float): degree to set claw servo to (default is 30.0).
+            radians (bool): whether the value to close claw to is in radians or degrees.
         """
         if radians:
             value = math.degrees(value)
@@ -146,9 +147,9 @@ class MechatronicsArm(AbstractArm):
         """Moves the specified segment to the given value.
 
         Arguments:
-            joint {str} -- joint to move.
-            value {float} -- value to apply to joint (in degrees).
-            radians {bool} -- whether the value given is in radians or degrees.
+            joint (str): segment to move.
+            value (float): value to apply to joint.
+            radians (bool): whether the value given is in radians or degrees.
         """
         if value == None:
             return

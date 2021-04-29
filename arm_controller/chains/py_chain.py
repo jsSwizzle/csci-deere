@@ -6,7 +6,15 @@ from arm_controller.chains.py_urdf import PyURDF, URDFObject
 class PyChain():
     def __init__(self, urdf_file_path):
         """Basic constructor for PyChain class.
+        """
+        self.urdf = PyURDF.parse(urdf_file_path)
+        self.joints = {}
+        for joint in self.urdf.joints:
+                self.joints[joint.name] = {'current_value': 0.0}
 
+
+    def number_of_segments(self):
+        """Returns the number of segments within the chain.
         Args:
             urdf_file_path {str} -- path to the urdf file to use to parse out the URDF objects.
         """

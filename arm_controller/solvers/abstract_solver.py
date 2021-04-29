@@ -1,8 +1,19 @@
+"""Abstract Solver class and requisite methods
+"""
 from abc import ABC
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 
 def matrix4x4_to_xyz_rpy(matrix):
+    """Takes a 4x4 transformation matrix and returns a tuple of the xyz coordinates and rpy values extracted from the matrix
+
+    Args:
+        matrix: Transformation matrix to convert into xyz rpy
+
+    Returns:
+        xyz(list[float]): x,y,z coordinates
+        rpy(list[float]): roll, pitch, and yaw values
+    """
     xyz = matrix[:-1, -1]
     r = R.from_matrix(matrix[:-1, :-1])
     rpy = r.as_rotvec()
@@ -10,6 +21,15 @@ def matrix4x4_to_xyz_rpy(matrix):
 
 
 def xyz_rpy_to_matrix4x4(xyz, rpy):
+    """Takes xyz coordinates and rpy values and returns a 4x4 transformation matrix created from those values
+
+    Args:
+        xyz(list[float]): x,y,z coordinates
+        rpy(list[float]): roll, pitch, and yaw values
+
+    Returns:
+        matrix: Transformation matrix created from xyz and rpy values
+    """
     matrix = np.eye(4)
     r = R.from_rotvec(rpy)
     matrix[:-1, :-1] = r.as_matrix()
@@ -43,9 +63,9 @@ class AbstractSolver(ABC):
         effector of the arm using the given angles of each of the joints.
 
         Args:
-            angles (list): list of current angles of each rotating joint in the chain.
+            angles (list[float]): list of current angles of each rotating joint in the chain.
             **kwargs:
         Returns:
-            coords (list): list containing XYZ coordinates of the end effector.
-            rpy (list): list containing Roll, Pitch, and Yaw of the end effector.
+            coords (list[float]): list containing XYZ coordinates of the end effector.
+            rpy (list[float]): list containing Roll, Pitch, and Yaw of the end effector.
         """
