@@ -38,13 +38,13 @@ class RTBSolver(AbstractSolver):
 
         Args:
             target_coords (list[float]): target end effector XYZ coordinates.
-            target_rpy (list): target end effector Roll, Pitch, and Yaw.
+            target_rpy (list[float]): target end effector Roll, Pitch, and Yaw.
             **kwargs:
                 initial_angles (list[float]): initial angles to solve from |
                 end_link (str): end link name to solve for
 
         Returns:
-            angles (list): list of angles for each rotating joint in the chain.
+            angles (list[float]): list of angles for each rotating joint in the chain.
         """
         if 'initial angles' in kwargs:
             initial_angles = np.array(kwargs['initial_angles']).astype(float)
@@ -71,7 +71,7 @@ class RTBSolver(AbstractSolver):
         Args:
             angles (list[float]): list of current angles of each rotating joint in the chain.
             **kwargs:
-                end_link: name of end effector to calculate
+                end_link (str): name of end effector to calculate
         Returns:
             coords (list[float]): list containing XYZ coordinates of the end effector.
             rpy (list[float]): list containing Roll, Pitch, and Yaw of the end effector.
