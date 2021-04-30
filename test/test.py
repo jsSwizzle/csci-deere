@@ -56,16 +56,6 @@ class Py_Chain(unittest.TestCase):
         self.assertEqual(self.joints[0], {'current_value': 0.0})
 
 
-    def test_get_current_values(self):
-        self.urdf = PyURDF.parse("../arm_controller/urdf/ex")
-        self.joints = {}
-        for joint in self.urdf.joints:
-            self.joints[joint.name] = {'current_value': 0.0}
-        self.set_default_values()
-
-        test_val = self._chain.get_current_values()
-        self.assertEqual(test_val[0], {'current_value': 0})
-
 class Arm(unittest.TestCase):
     """Unit testing class for arm class methods
     """
