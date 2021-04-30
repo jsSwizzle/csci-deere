@@ -64,14 +64,14 @@ Basic usage of this library is simple and straightforward:
 8. For the mechatronics arm specifically, you can specify 'open_claw' or 'close_claw' to open or close the claw on the arm respectively. These functions take two optional arguments, one for the angle to open/close the claw to, and the other whether that argument is in radians.
 
     `arm.open_claw() # With no arguments supplied, the robot will open its claw to its default open value.`
-    
+
     `arm.close_claw(value=10.0, radians=False)`
 
 9. Finally, the 'set_joint' method takes in a string to designate the joint to move, its new value, and whether the value is in radians or degrees. This method is called by all other methods internally when moving any part of the robot, but can be useful when wishing just to move a single joint at a time or when smaller, more precise, movements may be necessary.
 
     `arm.set_joint('elbow', 60.0, radians=False) # to know`
 
-**Plotter**: All of this functionality, except for the open/close claw methods, work the same way in the PlotterArm class. The one difference is that you must call the *exit* function before closing the program to properly disconnect the pipes.
+**Plotter**: All of this functionality, except for the open/close claw methods, work the same way in the PlotterArm class. The one difference is that you must call the *exit* function before closing the program to properly disconnect the pipes. After calling *exit* you should also call join on the arm.proc variable to wait for the process to exit before exiting your process.
 
 **demo.py**: Demos the primary functionality of the robot arm using the plotter class to guarantee functionality as compared to the mechanical arm.
 
@@ -105,4 +105,4 @@ In addition to operating a physical arm, users can simulate the arm using a matp
 
 In order to do this, a separate process is spawned during creation of the class. This process controls the matplotlib animation, as matplotlib needs to be the primary thread of the program in order to run correctly and allows control return back to the user to enter commands.
 
-To safely exit the process you need to call the 'exit()' function which flags the plotter process that it needs to exit.
+To safely exit the process you need to call the 'exit()' function which flags the plotter process that it needs to exit and then join on the arm.proc variable to wait for the animation to exit.
