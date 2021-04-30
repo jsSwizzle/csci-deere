@@ -47,7 +47,7 @@ Basic usage of this library is simple and straightforward:
 
 4. Using the 'set_speed' method you can set the speed (and optionally specify whether it is in rad/s or deg/s).
 
-    `arm.set_speed(10)` # Without specifying, it will assume you entered speed in deg/s
+    `arm.set_speed(10)` # Without specifying, it will assume you entered speed in deg/s.
 
 5. Using the 'get_pos' method you can retrieve the current xyz, rpy of the end effector (end point) of the arm.
 
