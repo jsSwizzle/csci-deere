@@ -12,7 +12,7 @@ class IKPySolver(AbstractSolver):
         """
         self._chain = ikpc.Chain(ikpc.URDF.get_urdf_parameters(chain.urdf.path, [chain.urdf.links[0].name]))
 
-    def inverse_solve(self, target_coords, target_rpy, **kwargs):
+    def inverse_solve(self, target_coords, target_rpy):
         """Finds the angles for each joint of the arm given a target end effector.
 
         Calculates the angles each joint needs to be at given the target end
@@ -21,9 +21,6 @@ class IKPySolver(AbstractSolver):
         Args:
             target_coords (list[float]): target end effector XYZ coordinates.
             target_rpy (list[float]): target end effector Roll, Pitch, and Yaw.
-            **kwargs:
-                orientation_mode (str): which axis to focus on in solution {'X', 'Y', 'Z'}
-                defaults to 'X'
         Returns:
             angles (list[float]): list of angles for each rotating joint in the chain.
         """
@@ -60,4 +57,3 @@ class IKPySolver(AbstractSolver):
         for mtx in matrices:
             coords.append(matrix4x4_to_xyz_rpy(mtx)[0])
         return coords
-        pass

@@ -63,7 +63,7 @@ class PlotterArm(AbstractArm):
         Args:
             ss (float): Rate of speed on a 1-10 scale: 1 being slowest, 10 being fastest.
             radians (bool): Whether the servo speed is given in radians or degrees per second.
-          
+
         Returns:
             ss (float): Returns the new servo speed.
         """
