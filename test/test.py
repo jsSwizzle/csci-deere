@@ -2,119 +2,108 @@
    with return values in robot arm library.
 """
 import unittest
-from arm_controller.arms import *
-from arm_controller.solvers import *
+import os
+import math
+from time import sleep
+from arm_controller.solvers.ikpy_solver import IKPySolver
+from arm_controller.arms.mechatronics_arm import MechatronicsArm
 from arm_controller.chains.py_chain import PyChain
-from arm_controller.chains.py_segment import PySegment
+from arm_controller.arms.abstract_arm import AbstractArm
+from adafruit_servokit import ServoKit
+from arm_controller.chains.py_urdf import PyURDF, URDFObject
 
 class Py_Chain(unittest.TestCase):
     """Unit testing class for py_chain class methods
     """
     def test_number_of_segments(self):
-        # ToDo determine test cases
-        world_segment = PySegment('seg0', 'world', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56.0], None)
-        waist_segment = PySegment('seg1', 'waist', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,42.93], 'Z', joint_no=0)
-        shoulder_segment = PySegment('seg2', 'shoulder', 150.0, 15.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,120.0], 'Y', joint_no=1)
-        elbow_segment = PySegment('seg3', 'elbow', 10.0, 0.0, 60.0, [0.0,0.0,0.0], [0.0,0.0,118.65], 'Y', joint_no=2)
-        wrist_roll_segment = PySegment('seg4', 'wrist_roll', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,60.028], 'Z', joint_no=4)
-        wrist_pitch_segment = PySegment('seg5', 'wrist_pitch', 80.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,30.17], 'Y', joint_no=5)
+        
+        self.urdf = PyURDF.parse("../arm_controller/urdf/ex")
+        self.joints = {}
+        for joint in self.urdf.joints:
+            self.joints[joint.name] = {'current_value': 0.0}
+        self.set_default_values()
 
-        self._chain = PyChain()
-        self._chain.append_segment(world_segment)
-        self._chain.append_segment(waist_segment)
-        self._chain.append_segment(shoulder_segment)
-        self._chain.append_segment(elbow_segment)
-        self._chain.append_segment(wrist_roll_segment)
-        self._chain.append_segment(wrist_pitch_segment)
+        self.assertEqual(self._chain.number_of_segments(), 5)
 
-        self.assertEqual(self._chain.number_of_segments(), 6)
+    def test_number_of_joints(self):
+        self.urdf = PyURDF.parse("../arm_controller/urdf/ex")
+        self.joints = {}
+        for joint in self.urdf.joints:
+            self.joints[joint.name] = {'current_value': 0.0}
+        self.set_default_values()
 
-    def test_push_segment(self):
-        #ToDo determine test cases
-        test_segment = PySegment('seg1', 'test', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56.0], None)
-        world_segment = PySegment('seg0', 'world', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56.0], None)
-        self._chain = PyChain()
-        self._chain.append_segment(world_segment)
-        self._chain.push_segment(test_segment)
-
-        self.assertEqual(len(self._chain.segments), 2)
-        self.assertEqual(self._chain.segments[0], test_segment)
-
-    def test_append_segment(self):
-        #ToDo determine test cases
-        self._chain = PyChain()
-        test_segment = PySegment('seg1', 'test', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56.0], None)
-        self._chain.append_segment(test_segment)
-
-        self.assertEqual(self._chain.number_of_segments(), 1)
-        self.assertEqual(self._chain.segments[0], test_segment)
+        self.asserEqual(self._chain.number_of_joints(), 4)
 
     def test_get_current_values(self):
-        #ToDo determine test cases
-        self._chain = PyChain()
-        test_segment = PySegment('seg1', 'test', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56.0], 'X')
-        self._chain.append_segment(test_segment)
+        self.urdf = PyURDF.parse("../arm_controller/urdf/ex")
+        self.joints = {}
+        for joint in self.urdf.joints:
+            self.joints[joint.name] = {'current_value': 0.0}
+        self.set_default_values()
+        current_values = []
+        for joint in self.joints:
+            current_values.append(self.joints[joint]['current_value'])
+
+        self.assertEqual(self.joints[0], {'current_value': 0.0})
+
+    def test_set_default_values(self):
+        self.urdf = PyURDF.parse("../arm_controller/urdf/ex")
+        self.joints = {}
+        for joint in self.urdf.joints:
+            self.joints[joint.name] = {'current_value': 0.0}
+        self.set_default_values()
+
+        self.assertEqual(self.joints[0], {'current_value': 0.0})
+
+
+    def test_get_current_values(self):
+        self.urdf = PyURDF.parse("../arm_controller/urdf/ex")
+        self.joints = {}
+        for joint in self.urdf.joints:
+            self.joints[joint.name] = {'current_value': 0.0}
+        self.set_default_values()
 
         test_val = self._chain.get_current_values()
-        self.assertEqual(test_val, [0.0])
+        self.assertEqual(test_val[0], {'current_value': 0})
 
 class Arm(unittest.TestCase):
     """Unit testing class for arm class methods
     """
-    # def test_move_to(self):
-    #     #ToDo determine test cases
-        
+
     def test_get_pos(self):
-        #ToDo determine test cases
-        world_segment = PySegment('seg0', 'world', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56.0], None)
-        waist_segment = PySegment('seg1', 'waist', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,42.93], 'Z', joint_no=0)
-        shoulder_segment = PySegment('seg2', 'shoulder', 150.0, 15.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,120.0], 'Y', joint_no=1)
-        elbow_segment = PySegment('seg3', 'elbow', 10.0, 0.0, 60.0, [0.0,0.0,0.0], [0.0,0.0,118.65], 'Y', joint_no=2)
-        wrist_roll_segment = PySegment('seg4', 'wrist_roll', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,60.028], 'Z', joint_no=4)
-        wrist_pitch_segment = PySegment('seg5', 'wrist_pitch', 80.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,30.17], 'Y', joint_no=5)
+        arm = MechatronicsArm()
 
-        self._chain = PyChain()
-        self._chain.append_segment(world_segment)
-        self._chain.append_segment(waist_segment)
-        self._chain.append_segment(shoulder_segment)
-        self._chain.append_segment(elbow_segment)
-        self._chain.append_segment(wrist_roll_segment)
-        self._chain.append_segment(wrist_pitch_segment)
+        test_val = arm.get_pos()
 
-        self._servo_speed = 10.0
-        self._claw_joint_no = 6
-        self._claw_value = 0.0
-        self._default_claw_value = 80.0
+        self.assertEqual(test_val,  self._solver.forward_solve(self.chain.get_current_values))
 
-class Solver(unittest.TestCase):
-    """Unit testing class for solver methods
-    """
-    from arm_controller.solvers.pykdl_solver import PyKDLSolver
-    def test_forward_solve(self):
-        world_segment = PySegment('seg0', 'world', 0.0, 0.0, 0.0, [0.0,0.0,0.0], [0.0,0.0,56.0], None)
-        waist_segment = PySegment('seg1', 'waist', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,42.93], 'Z', joint_no=0)
-        shoulder_segment = PySegment('seg2', 'shoulder', 150.0, 15.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,120.0], 'Y', joint_no=1)
-        elbow_segment = PySegment('seg3', 'elbow', 10.0, 0.0, 60.0, [0.0,0.0,0.0], [0.0,0.0,118.65], 'Y', joint_no=2)
-        wrist_roll_segment = PySegment('seg4', 'wrist_roll', 90.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,60.028], 'Z', joint_no=4)
-        wrist_pitch_segment = PySegment('seg5', 'wrist_pitch', 80.0, 0.0, 180.0, [0.0,0.0,0.0], [0.0,0.0,30.17], 'Y', joint_no=5)
+    def test_set_speed(self):
+        arm = MechatronicsArm()
 
-        self._chain = PyChain()
-        self._chain.append_segment(world_segment)
-        self._chain.append_segment(waist_segment)
-        self._chain.append_segment(shoulder_segment)
-        self._chain.append_segment(elbow_segment)
-        self._chain.append_segment(wrist_roll_segment)
-        self._chain.append_segment(wrist_pitch_segment)
+        self.set_speed(1)
+        self.assertEquals(arm._servo_speed, math.radians(1))
 
-        self._servo_speed = 10.0
-        self._claw_joint_no = 6
-        self._claw_value = 0.0
-        self._default_claw_value = 80.0
+    def test_move_to(self):
+        arm = MechatronicsArm()
+        
+        test_val = arm.move_to(100, 100, 100, 0, 0, 0)
+        self.assertEquals(test_val, arm.get_pos())
 
-        self._solver = PyKDLSolver(self._chain)
+    def test_open_claw(self):
+        arm = MechatronicsArm()
 
-        test_val = self._solver.forward_solve(self._chain.get_current_values)
-        print(test_val)
+        arm.close_claw()
+        arm.open_claw()
+        test_val = arm.chain.joints['claw']
+        self.assertEqual(test_val, {'current_value': 80})
+
+    def test_close_claw(self):
+        arm = MechatronicsArm()
+
+        arm.close_claw()
+        test_val = arm.chain.joints['claw']
+        self.assertEqual(test_val, {'current_value': 30})
+
 
 if __name__ == '__main__':
     """Runs unit tests.
