@@ -47,7 +47,7 @@ Basic usage of this library is simple and straightforward:
 
 4. Using the 'set_speed' method you can set the speed (and optionally specify whether it is in rad/s or deg/s).
 
-    `arm.set_speed(10)` # Without specifying, it will assume you entered speed in deg/s.
+    `arm.set_speed(10) # Without specifying, it will assume you entered speed in deg/s.`
 
 5. Using the 'get_pos' method you can retrieve the current xyz, rpy of the end effector (end point) of the arm.
 
@@ -55,7 +55,7 @@ Basic usage of this library is simple and straightforward:
 
 6. Using the 'move_to' method you specify an x, y, z (in meters) to move the arm. Optionally, you can supply a r, p, y (and optionally specify whether it is in rad/s or deg/s).    This function will return the angles that arm is now set to (in radians).
 
-    `angles = arm.move_to(0.04, 0.06, 0.08, roll=0.78, pitch=0.78, yaw=0.78, radians=True)` # Like 'set_speed' without specifying, it will assume you entered the rpy in degrees.
+    `angles = arm.move_to(0.04, 0.06, 0.08, roll=0.78, pitch=0.78, yaw=0.78, radians=True) # Like 'set_speed' without specifying, it will assume you entered the rpy in degrees.`
 
 7. Using the 'set_default_position' method, the arm will auto move from its current position back to its default position.
 
@@ -63,13 +63,13 @@ Basic usage of this library is simple and straightforward:
 
 8. For the mechatronics arm specifically, you can specify 'open_claw' or 'close_claw' to open or close the claw on the arm respectively. These functions take two optional arguments, one for the angle to open/close the claw to, and the other whether that argument is in radians.
 
-    `arm.open_claw()` # With no arguments supplied, the robot will open its claw to its default open value.
+    `arm.open_claw() # With no arguments supplied, the robot will open its claw to its default open value.`
     
     `arm.close_claw(value=10.0, radians=False)`
 
 9. Finally, the 'set_joint' method takes in a string to designate the joint to move, its new value, and whether the value is in radians or degrees. This method is called by all other methods internally when moving any part of the robot, but can be useful when wishing just to move a single joint at a time or when smaller, more precise, movements may be necessary.
 
-    `arm.set_joint('elbow', 60.0, radians=False)` # to know
+    `arm.set_joint('elbow', 60.0, radians=False) # to know`
 
 **Plotter**: All of this functionality, except for the open/close claw methods, work the same way in the PlotterArm class. The one difference is that you must call the *exit* function before closing the program to properly disconnect the pipes.
 
