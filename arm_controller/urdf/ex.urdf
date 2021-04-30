@@ -90,6 +90,8 @@
             these are not explicitly required, so our parser does not require them for instantiation of joints.
             Upper and lower limits ARE, unsurprisingly, routinely used in kinematics calculations, and should be added
             where-->
+        <!--    for ease of use with servos, it can be prudent to set the initial pose in rpy as the servos 0 value, and
+            set the lower limit to >=0 to get directly interpretable output from IK solutions-->
         <!--Assumed default effort (taken from documentation examples): 1000
             upper/lower limit values for joints:
                 revolute: radians
