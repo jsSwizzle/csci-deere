@@ -64,7 +64,7 @@ Basic usage of this library is simple and straightforward:
 8. For the mechatronics arm specifically, you can specify 'open_claw' or 'close_claw' to open or close the claw on the arm respectively. These functions take two optional arguments, one for the angle to open/close the claw to, and the other whether that argument is in radians.
 
     `arm.open_claw()` # With no arguments supplied, the robot will open its claw to its default open value.
-    `arm.close_claw(value=10.0, radians=False)`
+      `arm.close_claw(value=10.0, radians=False)`
 
 9. Finally, the 'set_joint' method takes in a string to designate the joint to move, its new value, and whether the value is in radians or degrees. This method is called by all other methods internally when moving any part of the robot, but can be useful when wishing just to move a single joint at a time or when smaller, more precise, movements may be necessary.
 
